@@ -1,0 +1,21 @@
+name: ESPN check
+on:
+  push:
+    branches: [cors-check]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for url in "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard" "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=6&dates=2026" "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=7&dates=2026"; do
+            acao=$(curl -sS -D - -o body.json -H "Origin: https://wintz320.github.io" "$url" | grep -i '^access-control-allow-origin' | tr -d '\r')
+            info=$(python3 -c "
+          import json
+          d = json.load(open('body.json'))
+          ev = d.get('events', [])
+          abbrs = sorted({c['team']['abbreviation'] for e in ev for c in e['competitions'][0]['competitors']})
+          states = sorted({e['competitions'][0]['status']['type']['state'] for e in ev})
+          print('events=%d week=%s states=%s abbrs=%s' % (len(ev), (d.get('week') or {}).get('number'), states, ' '.join(abbrs)))
+          ")
+            echo "::notice::$url || $acao || $info"
+          done
