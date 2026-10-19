@@ -313,7 +313,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
   <footer>
     <div class="legend" aria-hidden="true" id="legend"></div>
     <p>One point for every winning pick. Spread picks are graded against the number on that week&rsquo;s form, and totals go over or under the posted number. <span id="pushrule">A push scores zero.</span></p>
-    <p>Picks come from the weekly Google Form. Scores refresh about every 10 minutes during games, and this page updates itself while it&#x2019;s open.</p>
+    <p>Picks come from the weekly Google Form. Live scores come straight from ESPN about once a minute while this page is open.</p>
   </footer>
 </div>
 
@@ -682,7 +682,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
   'use strict';
   var E = window.PickEngine, T = E.TEAMS;
   var $ = function (id) { return document.getElementById(id); };
-  var model = null, data = null;
+  var model = null, data = null, scoresCheckedAt = null;
   var ui = { view: 'season', open: {} };
   var TZ = 'America/Chicago';
 
@@ -762,6 +762,9 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
   function underway(g) { var k = kickoffAt(g); return k && Date.now() >= k; }
   function whenText(g) { return underway(g) ? 'Under way, waiting on the final' : kickoff(g); }
   var LOCK_NOTE = 'Picks stay hidden until noon Sunday (Central), when they all show up here.';
+  function lockNote(w) {
+    return Date.now() >= revealAt(w) ? 'Picks unlock at noon Sunday and will show up here within a few minutes.' : LOCK_NOTE;
+  }
 
   var GLYPH = {
     W: '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.3 4.1 7.4 8 3"/></svg>',
@@ -890,7 +893,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
         '<div class="now-head"><h2 id="now-h">Week ' + w.week + '</h2><span class="chip">Picks coming in</span></div>' +
         '<p class="now-lead">' + esc(plural(w.entries.length, 'entry', 'entries') + ' in so far: ' +
           listNames(w.entries.map(function (e) { return model.players[e.pid]; }))) + '.</p>' +
-        '<p class="note" style="margin:0 0 12px">' + esc(LOCK_NOTE) + '</p></section>';
+        '<p class="note" style="margin:0 0 12px">' + esc(lockNote(w)) + '</p></section>';
     } else if (w) {
       h += '<section class="sheet now" aria-labelledby="now-h">' +
         '<div class="now-head"><h2 id="now-h">Week ' + w.week + '</h2>' +
@@ -968,7 +971,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
       var lh = '<section><div class="h2-row"><h2>Week ' + w.week + '</h2><span class="chip">Picks coming in</span></div>' +
         '<div class="week-meta"><span>' + esc(dateRange(w.firstDate, w.lastDate)) + '</span><span>' +
         plural(w.entries.length, 'entry', 'entries') + ' in</span></div>' +
-        '<p class="now-lead">' + esc(LOCK_NOTE) + '</p></section><section><ol class="sheet board">';
+        '<p class="now-lead">' + esc(lockNote(w)) + '</p></section><section><ol class="sheet board">';
       w.entries.slice().sort(function (a, b) { return a.ts - b.ts; }).forEach(function (e) {
         lh += '<li><div class="entry-btn board-head" style="text-transform:none;letter-spacing:0;font-size:14px">' +
           '<span class="rank"></span><span class="who"><span class="nm" style="color:var(--ink)">' + esc(model.players[e.pid].name) +
@@ -1098,7 +1101,9 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
   function renderMeta() {
     var bits = [];
     if (model.current) bits.push('<span>Through Week ' + model.current.week + '</span>');
-    if (data.updatedAt) bits.push('<span>Updated ' + esc(fmtUpdated(data.updatedAt)) + '</span>');
+    var upd = data.updatedAt;
+    if (scoresCheckedAt && (!upd || Date.parse(scoresCheckedAt) > Date.parse(upd))) upd = scoresCheckedAt;
+    if (upd) bits.push('<span>Updated ' + esc(fmtUpdated(upd)) + '</span>');
     var lives = Object.keys(data.live || {});
     if (lives.length) {
       var g = (data.games || []).filter(function (x) { return x.id === lives[0]; })[0];
@@ -1161,21 +1166,81 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
     });
   }
   start();
-  function poll() {
-    if (document.hidden || !data) return;
-    fetch('data.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
-      return r.ok ? r.json() : null;
-    }).then(function (d) {
-      if (!d || d.updatedAt === data.updatedAt) return;
-      data = d;
-      model = E.build(d);
-      var y = window.scrollY;
-      render();
-      try { window.scrollTo({ top: y }); } catch (e) {}
-    }).catch(function () {});
+  var ESPN_FIX = { WSH: 'WAS', LAR: 'LA', JAC: 'JAX', LVR: 'LV' };
+  var base = null, board = null, ticks = 0;
+
+  function espnUrl(week) {
+    return 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=2&week=' +
+      week + '&dates=' + ((base && base.season) || 2026);
   }
-  setInterval(poll, 60000);
-  document.addEventListener('visibilitychange', function () { if (!document.hidden) poll(); });
+  // Fold ESPN's scoreboard into a copy of data.json: finals into games, in-progress into live.
+  function combine(src, sb) {
+    var d = JSON.parse(JSON.stringify(src));
+    if (!sb) return d;
+    d.live = d.live || {};
+    (sb.events || []).forEach(function (ev) {
+      try {
+        var comp = ev.competitions[0], st = comp.status || ev.status || {}, kind = st.type || {}, side = {};
+        comp.competitors.forEach(function (c) { side[c.homeAway] = c; });
+        var home = ESPN_FIX[side.home.team.abbreviation] || side.home.team.abbreviation;
+        var away = ESPN_FIX[side.away.team.abbreviation] || side.away.team.abbreviation;
+        var when = Date.parse(String(ev.date || '').slice(0, 10));
+        var g = null;
+        for (var i = 0; i < d.games.length; i++) {
+          var x = d.games[i];
+          if (x.home === home && x.away === away && Math.abs(when - Date.parse(x.date)) <= 2 * 864e5) { g = x; break; }
+        }
+        if (!g) return;
+        var hs = parseInt(side.home.score, 10), as = parseInt(side.away.score, 10);
+        if (kind.completed && !isNaN(hs) && !isNaN(as)) {
+          g.homeScore = hs; g.awayScore = as; delete d.live[g.id];
+        } else if (kind.state === 'in' && !isNaN(hs) && !isNaN(as)) {
+          var p = parseInt(st.period, 10) || 0;
+          d.live[g.id] = { awayScore: as, homeScore: hs, clock: st.displayClock || '',
+            period: /HALFTIME/i.test(kind.name || '') ? 'Half' : (p > 4 ? 'OT' : (p ? 'Q' + p : '')) };
+        } else {
+          delete d.live[g.id];
+        }
+      } catch (e) {}
+    });
+    return d;
+  }
+  function apply() {
+    if (!base) return;
+    var fresh = combine(base, board);
+    var before = JSON.stringify([data && data.live, data && data.games, data && data.tabs, data && data.updatedAt]);
+    var after = JSON.stringify([fresh.live, fresh.games, fresh.tabs, fresh.updatedAt]);
+    data = fresh;
+    model = E.build(fresh);
+    if (before === after && ticks > 1) { renderMeta(); return; }
+    var y = window.scrollY;
+    render();
+    try { window.scrollTo({ top: y }); } catch (e) {}
+  }
+  function getJSON(url) {
+    return fetch(url, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+  }
+  function tick() {
+    if (document.hidden || !data) return;
+    ticks++;
+    var wk = model && model.current ? model.current.week : null;
+    var quiet = model && model.current && model.current.done;
+    var wantBoard = wk && (!quiet || ticks % 10 === 1);
+    Promise.all([
+      getJSON('data.json?t=' + Date.now()),
+      wantBoard ? getJSON(espnUrl(wk)) : Promise.resolve(null)
+    ]).then(function (res) {
+      if (res[0]) base = res[0];
+      if (res[1] && res[1].events) { board = res[1]; scoresCheckedAt = new Date().toISOString(); }
+      apply();
+    });
+  }
+  (function whenReady(n) {
+    if (data) { base = base || data; tick(); }
+    else if (n < 60) setTimeout(function () { whenReady(n + 1); }, 250);
+  })(0);
+  setInterval(tick, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) tick(); });
 })();
 </script>
 </body>

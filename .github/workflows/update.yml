@@ -2,13 +2,15 @@ name: Update leaderboard
 
 on:
   schedule:
-    # Every 10 minutes during game windows (times are UTC; Central is UTC-5 until Nov 1, then UTC-6)
-    - cron: "*/10 13-23 * * 0"        # Sunday, 8am CT onward
-    - cron: "*/10 16-23 * * 4,6"      # Thursday and Saturday, 11am CT onward
-    - cron: "*/10 23 * * 1"           # Monday evening
-    - cron: "*/10 0-5 * * 0,1,2,5"    # late Saturday, Sunday, Monday and Thursday nights
+    # GitHub runs these on a best-effort basis and often late or not at all, so the page also
+    # fetches live scores from ESPN itself. Minutes avoid the top of the hour, GitHub's busiest time.
+    # Times are UTC; Central is UTC-5 until Nov 1, then UTC-6.
+    - cron: "3-53/10 13-23 * * 0"        # Sunday, 8am CT onward
+    - cron: "3-53/10 16-23 * * 4,6"      # Thursday and Saturday, 11am CT onward
+    - cron: "3-53/10 23 * * 1"           # Monday evening
+    - cron: "3-53/10 0-5 * * 0,1,2,5"    # late Saturday, Sunday, Monday and Thursday nights
     # Hourly the rest of the week, to pick up new form entries
-    - cron: "7 * * * *"
+    - cron: "37 * * * *"
   workflow_dispatch:
   push:
     branches: [main]
