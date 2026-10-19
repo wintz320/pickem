@@ -1,0 +1,74 @@
+name: Update leaderboard
+
+on:
+  schedule:
+    # Every 10 minutes during game windows (times are UTC; Central is UTC-5 until Nov 1, then UTC-6)
+    - cron: "*/10 13-23 * * 0"        # Sunday, 8am CT onward
+    - cron: "*/10 16-23 * * 4,6"      # Thursday and Saturday, 11am CT onward
+    - cron: "*/10 23 * * 1"           # Monday evening
+    - cron: "*/10 0-5 * * 0,1,2,5"    # late Saturday, Sunday, Monday and Thursday nights
+    # Hourly the rest of the week, to pick up new form entries
+    - cron: "7 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - config.json
+      - scripts/**
+      - .github/workflows/update.yml
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: leaderboard
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.build.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl==3.1.5
+      - id: build
+        env:
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+        run: python scripts/build.py
+      - name: Save new data
+        if: steps.build.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git commit -m "Update standings data" || exit 0
+          git pull --rebase --autostash origin main
+          git push
+      - name: Package site
+        if: steps.build.outputs.changed == 'true' || github.event_name != 'schedule'
+        run: |
+          mkdir -p _site
+          cp index.html data.json _site/
+          touch _site/.nojekyll
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.build.outputs.changed == 'true' || github.event_name != 'schedule'
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.changed == 'true' || github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

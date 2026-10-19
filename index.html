@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Family NFL pick'em standings, graded against the spread.">
+<meta property="og:title" content="NFL Pick'em 2026">
+<meta property="og:description" content="Family standings, graded against the spread. Updates during games.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#EDF0EB">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+</style>
+<title>NFL Pick'em 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<style>
+/* Layout: one column, like the office-pool pick sheet on a clipboard. Standings come first,
+   a highlighter marks whoever is on top, ballpoint blue marks anything you can tap. */
+:root {
+  --paper: #EDF0EB;
+  --sheet: #FBFCFA;
+  --ink: #131B2E;
+  --ink-soft: #525C70;
+  --rule: #D3D9D1;
+  --cell: rgba(19, 27, 46, .055);
+  --pen: #2347D6;
+  --marker: rgba(255, 216, 46, .80);
+  --win: #11804A;
+  --loss: #C93A2F;
+  --push: #868E9B;
+  --live: #CF6500;
+  --on-fill: #FFFFFF;
+  --display: "Big Shoulders Display", "Big Shoulders", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0E131B; --sheet: #151C27; --ink: #E7ECF3; --ink-soft: #98A3B5; --rule: #283246;
+    --cell: rgba(231, 236, 243, .07); --pen: #8DA8FF; --marker: rgba(226, 188, 40, .36);
+    --win: #3FB874; --loss: #F06A5D; --push: #7E8798; --live: #F5A03C; --on-fill: #FFFFFF;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0E131B; --sheet: #151C27; --ink: #E7ECF3; --ink-soft: #98A3B5; --rule: #283246;
+  --cell: rgba(231, 236, 243, .07); --pen: #8DA8FF; --marker: rgba(226, 188, 40, .36);
+  --win: #3FB874; --loss: #F06A5D; --push: #7E8798; --live: #F5A03C; --on-fill: #FFFFFF;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 10; background: var(--paper);
+}
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+button { font: inherit; color: inherit; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Masthead */
+.mast { padding-block: 22px 12px; }
+.eyebrow {
+  font-size: 11px; font-weight: 650; letter-spacing: .13em; text-transform: uppercase;
+  color: var(--ink-soft);
+}
+h1 {
+  font-family: var(--display); font-weight: 900; text-transform: uppercase;
+  font-size: clamp(48px, 13.5vw, 78px); line-height: .84; letter-spacing: .005em;
+  margin: 6px 0 0; text-wrap: balance;
+}
+.story { margin: 12px 0 0; font-size: 16.5px; line-height: 1.4; max-width: 58ch; text-wrap: pretty; }
+.meta {
+  margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px;
+  font-size: 12.5px; color: var(--ink-soft);
+}
+.live-pill {
+  display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--live);
+  font-variant-numeric: tabular-nums;
+}
+.live-pill::before, .tab.is-live::after, .dot.live::after {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--live);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+@keyframes pulse { 50% { opacity: .25; } }
+
+/* Week tabs */
+.tabs {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  background: var(--paper); border-bottom: 1px solid var(--rule);
+}
+.tabs-in {
+  display: flex; gap: 6px; overflow-x: auto; padding-block: 10px;
+  scrollbar-width: none;
+}
+.tabs-in::-webkit-scrollbar { display: none; }
+.tab {
+  flex: none; display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 13px; border-radius: 999px; border: 1px solid var(--rule);
+  background: var(--sheet); font-size: 13.5px; font-weight: 650; font-stretch: 90%;
+  cursor: pointer; white-space: nowrap;
+}
+.tab:hover { border-color: var(--pen); }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.tab:focus-visible, .row-btn:focus-visible, .link:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
+
+main { padding-block: 16px 8px; display: grid; gap: 22px; }
+h2 {
+  font-family: var(--display); font-weight: 800; text-transform: uppercase;
+  font-size: 25px; line-height: 1; letter-spacing: .015em; margin: 0 0 10px;
+}
+.h2-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.h2-row h2 { margin: 0; }
+.h2-row + * { margin-top: 10px; }
+.note { font-size: 12.5px; color: var(--ink-soft); }
+.sheet { background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px; }
+.link {
+  background: none; border: 0; padding: 0; cursor: pointer; color: var(--pen);
+  font-weight: 650; font-size: 13.5px; text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* This-week card */
+.now { padding: 14px 16px 6px; }
+.now-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.now-head h2 { margin: 0; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--ink-soft);
+}
+.chip.is-live { color: var(--live); }
+.chip.is-live::before {
+  content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--live);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.now-lead { margin: 6px 0 4px; font-size: 15px; }
+.games { list-style: none; margin: 0; padding: 0; }
+.game { padding: 12px 0; border-top: 1px solid var(--rule); }
+.game-head { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
+.game-name { font-weight: 700; font-size: 15.5px; }
+.game-when { font-size: 12.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.game-when.is-live { color: var(--live); font-weight: 700; }
+.scoreline {
+  font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.1;
+  font-variant-numeric: tabular-nums; margin-top: 2px;
+}
+.splits { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; }
+.split { display: grid; grid-template-columns: 1fr auto; gap: 1px 10px; align-items: baseline; }
+.split-pick { font-weight: 650; font-size: 14px; }
+.split-n { font-family: var(--display); font-weight: 800; font-size: 18px; font-variant-numeric: tabular-nums; }
+.split-who { grid-column: 1 / -1; font-size: 12.5px; color: var(--ink-soft); }
+.split.now-W .split-pick { color: var(--win); }
+.split.now-L .split-pick { color: var(--loss); }
+.split-state { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-left: 6px; }
+
+/* Season standings */
+.board { list-style: none; margin: 0; padding: 0; }
+.board > li + li { border-top: 1px solid var(--rule); }
+.row-btn {
+  box-sizing: border-box;
+  width: 100%; text-align: left; background: none; border: 0; cursor: pointer;
+  padding: 11px 14px; display: grid; align-items: center;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  grid-template-areas: "rank name total" "rank strip strip";
+  gap: 6px 10px; border-radius: 10px;
+}
+.row-btn:hover { background: var(--cell); }
+.board-head { cursor: default; padding-block: 9px 7px; }
+.board-head:hover { background: none; }
+.board-head, .board-head .total, .board-head .who {
+  font-family: var(--body); font-size: 10.5px; font-weight: 700; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--ink-soft); line-height: 1.2;
+}
+.board-head .total { align-self: end; }
+.board-head .dots-h { grid-area: dots; }
+.wk-h { width: 26px; text-align: center; letter-spacing: .02em; }
+.rank {
+  grid-area: rank; align-self: start; padding-top: 1px;
+  font-family: var(--display); font-weight: 800; font-size: 20px; line-height: 1.1;
+  color: var(--ink-soft); font-variant-numeric: tabular-nums;
+}
+.rank small { font-size: 12px; font-weight: 700; }
+.who { grid-area: name; min-width: 0; }
+.nm { font-weight: 700; font-size: 16.5px; font-stretch: 92%; line-height: 1.25; }
+.hl {
+  background: linear-gradient(transparent 50%, var(--marker) 50%, var(--marker) 92%, transparent 92%);
+  padding: 0 .14em; margin: 0 -.14em;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.sub { display: block; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.total {
+  grid-area: total; text-align: right; align-self: start;
+  font-family: var(--display); font-weight: 900; font-size: 36px; line-height: .9;
+  font-variant-numeric: tabular-nums;
+}
+.strip { grid-area: strip; display: flex; flex-wrap: wrap; gap: 3px; }
+.wk {
+  width: 26px; height: 22px; padding: 0; display: inline-grid; place-items: center;
+  border-radius: 4px; background: var(--cell); font-size: 12px; font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.wk.top { background: var(--marker); }
+.wk.open { box-shadow: inset 0 0 0 1px var(--live); }
+.wk.out { color: var(--ink-soft); background: transparent; box-shadow: inset 0 0 0 1px var(--rule); }
+.strip-key { display: flex; gap: 3px; margin: 0 0 4px; }
+.detail { padding: 0 14px 14px 54px; }
+.detail p { margin: 0 0 10px; font-size: 13.5px; color: var(--ink-soft); }
+.wkcards { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.wkcard { display: grid; grid-template-columns: 44px minmax(0, 1fr) 26px; gap: 8px; align-items: center; }
+.wkcard-l { font-size: 12px; font-weight: 700; color: var(--ink-soft); }
+.wkcard-n { text-align: right; font-weight: 750; font-variant-numeric: tabular-nums; }
+
+/* Pick dots */
+.dots { display: flex; flex-wrap: wrap; gap: 3px; }
+.dot {
+  width: 15px; height: 15px; border-radius: 3px; display: inline-grid; place-items: center;
+  flex: none; position: relative;
+}
+.dot svg { width: 9px; height: 9px; fill: none; stroke: var(--on-fill); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.dot.W { background: var(--win); }
+.dot.L { background: var(--loss); }
+.dot.P { background: var(--push); }
+.dot.pending { box-shadow: inset 0 0 0 1.5px var(--rule); }
+.dot.live { box-shadow: inset 0 0 0 1.5px var(--live); }
+.dot.live::after { width: 5px; height: 5px; }
+.dot.void { box-shadow: inset 0 0 0 1.5px var(--rule); }
+.dot.void svg { stroke: var(--ink-soft); }
+
+/* Week view */
+.week-meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+.entry-btn {
+  box-sizing: border-box;
+  width: 100%; text-align: left; background: none; border: 0; cursor: pointer;
+  padding: 11px 14px; display: grid; align-items: center;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  grid-template-areas: "rank name total" "rank dots dots";
+  gap: 6px 10px; border-radius: 10px;
+}
+.entry-btn:hover { background: var(--cell); }
+.entry-btn .dots { grid-area: dots; }
+.picks { list-style: none; margin: 0; padding: 0 14px 12px 54px; }
+.pk {
+  display: grid; grid-template-columns: 15px minmax(0, 1fr) auto; gap: 2px 10px;
+  align-items: start; padding: 7px 0; border-top: 1px dotted var(--rule);
+}
+.pk .dot { margin-top: 2px; }
+.pk-what { font-weight: 650; font-size: 14px; }
+.pk-game { display: block; font-size: 12.5px; color: var(--ink-soft); }
+.pk-res { font-size: 12.5px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+.pk-res.W { color: var(--win); font-weight: 650; }
+.pk-res.L { color: var(--loss); font-weight: 650; }
+.pk-res.live { color: var(--live); font-weight: 650; }
+
+.results { list-style: none; margin: 0; padding: 4px 14px; }
+.res { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 2px 8px; padding: 10px 0; }
+.results > .res + .res { border-top: 1px solid var(--rule); }
+.res-g { font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--ink-soft); line-height: 1.2; }
+.res-m { font-weight: 650; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+.res-m b { font-family: var(--display); font-size: 18px; font-weight: 800; }
+.res-l { grid-column: 2; font-size: 13px; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 2px 12px; font-variant-numeric: tabular-nums; }
+.res-l .ok { color: var(--win); font-weight: 650; }
+.res-l .pu { color: var(--push); font-weight: 650; }
+
+.empty { padding: 28px 16px; text-align: center; color: var(--ink-soft); }
+footer { border-top: 1px solid var(--rule); margin-top: 18px; padding-block: 16px 36px; font-size: 12.5px; color: var(--ink-soft); }
+footer p { margin: 0 0 8px; max-width: 66ch; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-bottom: 10px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+@media (min-width: 660px) {
+  .row-btn { grid-template-columns: 36px minmax(150px, 1fr) auto 64px; grid-template-areas: "rank name strip total"; padding: 12px 16px; }
+  .entry-btn { grid-template-columns: 36px minmax(150px, 210px) minmax(0, 1fr) 52px; grid-template-areas: "rank name dots total"; padding: 12px 16px; }
+  .total { align-self: center; }
+  .board-head .total { align-self: end; }
+  .detail, .picks { padding-left: 62px; }
+  .rank { align-self: center; padding-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-pill::before, .tab.is-live::after, .dot.live::after, .chip.is-live::before { animation: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="eyebrow" id="eyebrow">2026 season &middot; against the spread</div>
+    <h1>NFL Pick'em</h1>
+    <p class="story" id="story">Loading the standings&hellip;</p>
+    <div class="meta" id="meta"></div>
+  </header>
+</div>
+<nav class="tabs" aria-label="Weeks">
+  <div class="wrap"><div class="tabs-in" id="tabs" role="tablist"></div></div>
+</nav>
+<div class="wrap">
+  <main id="view" aria-live="polite"></main>
+  <footer>
+    <div class="legend" aria-hidden="true" id="legend"></div>
+    <p>One point for every winning pick. Spread picks are graded against the number on that week&rsquo;s form, and totals go over or under the posted number. <span id="pushrule">A push scores zero.</span></p>
+    <p>Picks come from the weekly Google Form. Scores refresh about every 10 minutes during games, and this page updates itself while it&#x2019;s open.</p>
+  </footer>
+</div>
+
+<script>
+/* Pick'em grading engine: raw sheet rows + game results -> standings.
+   Pure functions, no DOM. Shared by the page and the test harness. */
+(function (root) {
+  'use strict';
+
+  var TEAMS = {
+    ARI: ['Cardinals', 'Arizona'], ATL: ['Falcons', 'Atlanta'], BAL: ['Ravens', 'Baltimore'],
+    BUF: ['Bills', 'Buffalo'], CAR: ['Panthers', 'Carolina'], CHI: ['Bears', 'Chicago'],
+    CIN: ['Bengals', 'Cincinnati'], CLE: ['Browns', 'Cleveland'], DAL: ['Cowboys', 'Dallas'],
+    DEN: ['Broncos', 'Denver'], DET: ['Lions', 'Detroit'], GB: ['Packers', 'Green Bay'],
+    HOU: ['Texans', 'Houston'], IND: ['Colts', 'Indianapolis'], JAX: ['Jaguars', 'Jacksonville'],
+    KC: ['Chiefs', 'Kansas City'], LV: ['Raiders', 'Las Vegas'], LAC: ['Chargers', 'LA Chargers'],
+    LA: ['Rams', 'LA Rams'], MIA: ['Dolphins', 'Miami'], MIN: ['Vikings', 'Minnesota'],
+    NE: ['Patriots', 'New England'], NO: ['Saints', 'New Orleans'], NYG: ['Giants', 'NY Giants'],
+    NYJ: ['Jets', 'NY Jets'], PHI: ['Eagles', 'Philadelphia'], PIT: ['Steelers', 'Pittsburgh'],
+    SF: ['49ers', 'San Francisco'], SEA: ['Seahawks', 'Seattle'], TB: ['Buccaneers', 'Tampa Bay'],
+    TEN: ['Titans', 'Tennessee'], WAS: ['Commanders', 'Washington']
+  };
+  var NICK = {};
+  Object.keys(TEAMS).forEach(function (a) {
+    NICK[TEAMS[a][0].toLowerCase()] = a;
+    NICK[TEAMS[a][1].toLowerCase()] = a;
+    NICK[(TEAMS[a][1] + ' ' + TEAMS[a][0]).toLowerCase()] = a;
+  });
+  NICK['niners'] = 'SF'; NICK['bucs'] = 'TB'; NICK['pats'] = 'NE'; NICK['jags'] = 'JAX';
+
+  function teamAbbr(name) {
+    var n = String(name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    if (NICK[n]) return NICK[n];
+    var last = n.split(' ').pop();
+    return NICK[last] || null;
+  }
+
+  function normName(s) {
+    return String(s || '').normalize('NFKC')
+      .replace(/[\u2018\u2019\u02bc`\u00b4]/g, "'")
+      .replace(/\s+/g, ' ').trim().toLowerCase();
+  }
+  function cleanName(s) {
+    return String(s || '').normalize('NFKC').replace(/[\u2018\u2019\u02bc]/g, "'").replace(/\s+/g, ' ').trim();
+  }
+
+  var DAYS = { sun: 'Sunday', mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday' };
+
+  // "Sun 12:00pm CT" -> {day:'Sunday', minutes: 720 (CT)}; "Thu (ALREADY PLAYED)" -> {day:'Thursday'}
+  function parseSlot(s) {
+    var out = {};
+    var m = String(s || '').match(/\b(sun|mon|tue|wed|thu|fri|sat)[a-z]*\b/i);
+    if (m) out.day = DAYS[m[1].toLowerCase()];
+    var t = String(s || '').match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
+    if (t) {
+      var h = parseInt(t[1], 10) % 12 + (t[3].toLowerCase() === 'pm' ? 12 : 0);
+      out.minutes = h * 60 + parseInt(t[2], 10);
+    }
+    if (/already played/i.test(s)) out.alreadyPlayed = true;
+    return out;
+  }
+
+  function parseLine(s) {
+    if (s == null) return 0;
+    var t = String(s).replace(/\u2212/g, '-').replace(/\s+/g, '').toLowerCase();
+    if (!t || t === 'pk' || t === 'pick' || t === "pick'em" || t === 'even' || t === 'ev') return 0;
+    var v = parseFloat(t);
+    return isNaN(v) ? null : v;
+  }
+
+  // One form cell -> list of picks
+  function parsePicks(cell) {
+    var text = String(cell || '').trim();
+    if (!text) return [];
+    var chunks = text.split(/,\s*(?=G\s*\d+\s*\|)/i);
+    var picks = [];
+    chunks.forEach(function (chunk) {
+      var parts = chunk.split('|').map(function (x) { return x.trim(); });
+      var gm = (parts[0] || '').match(/^G\s*(\d+)$/i);
+      var body = parts[1] || '';
+      var slot = parseSlot(parts.slice(2).join(' | '));
+      var pick = { raw: chunk.trim(), g: gm ? parseInt(gm[1], 10) : null, slot: slot };
+      var tm = body.match(/^(over|under)\s*([0-9]+(?:\.[0-9]+)?)$/i);
+      var sm = body.match(/^(.*?)\s*\((home|away)\)\s*([+\-\u2212]?\s*[0-9]+(?:\.[0-9]+)?|pk|pick|even)?\s*$/i);
+      if (tm) {
+        pick.kind = 'total';
+        pick.ou = tm[1].toLowerCase() === 'over' ? 'O' : 'U';
+        pick.line = parseFloat(tm[2]);
+      } else if (sm) {
+        pick.kind = 'side';
+        pick.teamNick = sm[1].trim();
+        pick.team = teamAbbr(sm[1]);
+        pick.role = sm[2].toLowerCase();
+        pick.line = parseLine(sm[3]);
+      } else {
+        pick.kind = 'unknown';
+      }
+      if (pick.g == null || pick.kind === 'unknown' || (pick.kind === 'side' && (!pick.team || pick.line == null))) {
+        pick.bad = true;
+      }
+      picks.push(pick);
+    });
+    return picks;
+  }
+
+  // "9/12/2026 7:36:17" (sheet's local time) -> sortable number
+  function stamp(s) {
+    var m = String(s || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    if (!m) return 0;
+    return Date.UTC(+m[3], +m[1] - 1, +m[2], +m[4], +m[5], +(m[6] || 0));
+  }
+
+  function etToCtMinutes(t) {
+    var m = String(t || '').match(/(\d{1,2}):(\d{2})/);
+    if (!m) return null;
+    return (parseInt(m[1], 10) - 1) * 60 + parseInt(m[2], 10);
+  }
+
+  function gradeOne(pick, game, live, pushPoints) {
+    var as, hs, state;
+    if (game && game.awayScore != null && game.homeScore != null) {
+      as = game.awayScore; hs = game.homeScore; state = 'final';
+    } else if (game && live && live[game.id] && live[game.id].awayScore != null) {
+      as = live[game.id].awayScore; hs = live[game.id].homeScore; state = 'live';
+    } else {
+      return { state: game ? 'pending' : 'unmatched' };
+    }
+    var v;
+    if (pick.kind === 'side') {
+      var mine = pick.role === 'home' ? hs : as;
+      var theirs = pick.role === 'home' ? as : hs;
+      v = mine - theirs + pick.line;
+    } else {
+      v = pick.ou === 'O' ? (as + hs) - pick.line : pick.line - (as + hs);
+    }
+    var res = v > 0 ? 'W' : v < 0 ? 'L' : 'P';
+    return { state: state, res: res, margin: v };
+  }
+
+  function build(data) {
+    var cfg = data.config || {};
+    var pushPoints = typeof cfg.pushPoints === 'number' ? cfg.pushPoints : 0;
+    var voids = {};
+    (cfg.void || []).forEach(function (k) { voids[String(k).toUpperCase()] = true; });
+    var live = data.live || {};
+
+    // games by week
+    var gamesByWeek = {};
+    (data.games || []).forEach(function (g) {
+      (gamesByWeek[g.week] = gamesByWeek[g.week] || []).push(g);
+    });
+
+    // player alias index
+    var aliasIdx = {}, cfgPlayers = cfg.players || {};
+    Object.keys(cfgPlayers).forEach(function (pid) {
+      var p = cfgPlayers[pid];
+      aliasIdx[normName(p.name)] = pid;
+      (p.aliases || []).forEach(function (a) { aliasIdx[normName(a)] = pid; });
+    });
+    function pidFor(raw) {
+      var n = normName(raw);
+      return aliasIdx[n] || ('n:' + n);
+    }
+
+    // tabs -> parsed rows
+    var weekEntries = {}, tabWeek = {}, forcedWeeks = data.tabWeeks || {};
+    Object.keys(data.tabs || {}).forEach(function (title) {
+      var rows = data.tabs[title] || [];
+      var parsed = [];
+      rows.forEach(function (r, i) {
+        if (!r || r.length < 3) return;
+        if (i === 0 && /timestamp/i.test(r[0] || '')) return;
+        var name = cleanName(r[1]);
+        if (!name || !String(r[2] || '').trim()) return;
+        var hidden = String(r[2]).trim() === 'HIDDEN';
+        parsed.push({ at: r[0], ts: stamp(r[0]), rawName: name, picks: hidden ? [] : parsePicks(r[2]), hidden: hidden, tab: title });
+      });
+      if (!parsed.length) return;
+      // which NFL week does this tab belong to? match side picks to the schedule
+      var best = forcedWeeks[title] ? +forcedWeeks[title] : null, bestScore = best ? 1 : 0;
+      if (best == null) Object.keys(gamesByWeek).forEach(function (wk) {
+        var gs = gamesByWeek[wk], score = 0;
+        parsed.forEach(function (e) {
+          e.picks.forEach(function (p) {
+            if (p.kind !== 'side' || !p.team) return;
+            for (var k = 0; k < gs.length; k++) {
+              if ((p.role === 'home' ? gs[k].home : gs[k].away) === p.team) { score++; break; }
+            }
+          });
+        });
+        if (score > bestScore) { bestScore = score; best = +wk; }
+      });
+      if (best == null) return;
+      tabWeek[title] = best;
+      (weekEntries[best] = weekEntries[best] || []).push.apply(weekEntries[best], parsed);
+    });
+
+    var weeks = [], players = {};
+    function player(pid, rawName, ts) {
+      var p = players[pid];
+      if (!p) {
+        p = players[pid] = { pid: pid, names: {}, latest: { name: rawName, ts: -1 }, weeks: {}, total: 0, w: 0, l: 0, p: 0, open: 0 };
+      }
+      p.names[rawName] = true;
+      if (ts >= p.latest.ts) p.latest = { name: rawName, ts: ts };
+      return p;
+    }
+
+    Object.keys(weekEntries).map(Number).sort(function (a, b) { return a - b; }).forEach(function (wk) {
+      var gs = gamesByWeek[wk] || [];
+      var byId = {}; gs.forEach(function (g) { byId[g.id] = g; });
+      var entries = weekEntries[wk];
+
+      // latest submission per player wins
+      var latestBy = {};
+      entries.forEach(function (e) {
+        e.pid = pidFor(e.rawName);
+        if (!latestBy[e.pid] || e.ts >= latestBy[e.pid].ts) latestBy[e.pid] = e;
+      });
+      entries = Object.keys(latestBy).map(function (k) { return latestBy[k]; });
+
+      // map form game numbers -> games, by votes from side picks
+      var votes = {};
+      entries.forEach(function (e) {
+        e.picks.forEach(function (p) {
+          if (p.kind !== 'side' || !p.team || p.g == null) return;
+          gs.forEach(function (g) {
+            if ((p.role === 'home' ? g.home : g.away) === p.team) {
+              var v = votes[p.g] = votes[p.g] || {};
+              v[g.id] = (v[g.id] || 0) + 1;
+            }
+          });
+        });
+      });
+      var gmap = {}, used = {};
+      Object.keys(votes).forEach(function (n) {
+        var v = votes[n], top = null;
+        Object.keys(v).forEach(function (id) { if (!top || v[id] > v[top]) top = id; });
+        gmap[n] = byId[top]; used[top] = true;
+      });
+      // totals-only game numbers: match by kickoff slot, then by total line
+      var orphan = {};
+      entries.forEach(function (e) {
+        e.picks.forEach(function (p) {
+          if (p.g != null && !gmap[p.g] && !p.bad) (orphan[p.g] = orphan[p.g] || []).push(p);
+        });
+      });
+      Object.keys(orphan).forEach(function (n) {
+        var ps = orphan[n], slot = ps[0].slot || {};
+        var cands = gs.filter(function (g) {
+          if (used[g.id]) return false;
+          if (slot.day && g.weekday !== slot.day) return false;
+          if (slot.minutes != null && etToCtMinutes(g.timeET) !== slot.minutes) return false;
+          return true;
+        });
+        if (cands.length > 1) {
+          var line = null;
+          ps.forEach(function (p) { if (p.kind === 'total') line = p.line; });
+          if (line != null) {
+            cands.sort(function (a, b) {
+              return Math.abs((a.totalLine || 0) - line) - Math.abs((b.totalLine || 0) - line);
+            });
+            cands = [cands[0]];
+          }
+        }
+        if (cands.length === 1) { gmap[n] = cands[0]; used[cands[0].id] = true; }
+      });
+
+      // grade
+      var week = { week: wk, games: gmap, entries: [], tabs: {}, final: 0, live: 0, pending: 0 };
+      var gameState = {};
+      Object.keys(gmap).forEach(function (n) {
+        var g = gmap[n];
+        var st = (g.awayScore != null && g.homeScore != null) ? 'final' : (live[g.id] && live[g.id].awayScore != null ? 'live' : 'pending');
+        gameState[n] = st;
+        week[st]++;
+      });
+      week.gameState = gameState;
+
+      entries.forEach(function (e) {
+        week.tabs[e.tab] = true;
+        var t = { w: 0, l: 0, p: 0, open: 0, liveW: 0, liveL: 0, liveP: 0, bad: 0, n: 0 };
+        e.picks.forEach(function (p) {
+          p.game = p.g != null ? gmap[p.g] || null : null;
+          if (p.bad) { p.state = 'bad'; t.bad++; return; }
+          if (voids['W' + wk + ':G' + p.g]) { p.state = 'void'; return; }
+          var r = gradeOne(p, p.game, live, pushPoints);
+          p.state = r.state; p.res = r.res; p.margin = r.margin;
+          t.n++;
+          if (r.state === 'final') { t[r.res.toLowerCase()]++; }
+          else if (r.state === 'live') { t.open++; t['live' + r.res]++; }
+          else { t.open++; }
+        });
+        t.pts = t.w + pushPoints * t.p;
+        t.max = t.pts + t.open;
+        e.tally = t;
+        var pl = player(e.pid, e.rawName, e.ts);
+        pl.weeks[wk] = { tally: t, entry: e };
+        pl.total += t.pts; pl.w += t.w; pl.l += t.l; pl.p += t.p; pl.open += t.open;
+        week.entries.push(e);
+      });
+
+      week.done = week.pending === 0 && week.live === 0 && Object.keys(gmap).length > 0;
+      var top = -1;
+      week.entries.forEach(function (e) { if (e.tally.pts > top) top = e.tally.pts; });
+      week.top = top;
+      week.entries.sort(function (a, b) {
+        return b.tally.pts - a.tally.pts || b.tally.max - a.tally.max || a.rawName.localeCompare(b.rawName);
+      });
+      week.leaders = week.entries.filter(function (e) { return e.tally.pts === top; }).map(function (e) { return e.pid; });
+      // rank within week
+      var lastPts = null, lastRank = 0;
+      week.entries.forEach(function (e, i) {
+        if (e.tally.pts !== lastPts) { lastRank = i + 1; lastPts = e.tally.pts; }
+        e.rank = lastRank;
+      });
+      week.entries.forEach(function (e) {
+        e.tied = week.entries.filter(function (x) { return x.rank === e.rank; }).length > 1;
+      });
+      if (gs.length) {
+        week.firstDate = gs.reduce(function (m, g) { return g.date < m ? g.date : m; }, gs[0].date);
+        week.lastDate = gs.reduce(function (m, g) { return g.date > m ? g.date : m; }, gs[0].date);
+      }
+      weeks.push(week);
+    });
+
+    // names
+    Object.keys(players).forEach(function (pid) {
+      var p = players[pid];
+      var c = cfgPlayers[pid];
+      p.name = c && c.name ? c.name : p.latest.name;
+      var shown = normName(p.name);
+      p.aka = Object.keys(p.names).filter(function (n) { return normName(n) !== shown; });
+      var seen = {};
+      p.aka = p.aka.filter(function (n) { var k = normName(n); if (seen[k]) return false; seen[k] = true; return true; });
+    });
+
+    var standings = Object.keys(players).map(function (k) { return players[k]; });
+    standings.sort(function (a, b) {
+      return b.total - a.total || (b.w / Math.max(1, b.w + b.l)) - (a.w / Math.max(1, a.w + a.l)) || a.name.localeCompare(b.name);
+    });
+    var lp = null, lr = 0;
+    standings.forEach(function (p, i) {
+      if (p.total !== lp) { lr = i + 1; lp = p.total; }
+      p.rank = lr;
+    });
+    standings.forEach(function (p) {
+      p.tied = standings.filter(function (x) { return x.rank === p.rank; }).length > 1;
+    });
+
+    var current = weeks.length ? weeks[weeks.length - 1] : null;
+    return {
+      weeks: weeks, players: players, standings: standings, current: current,
+      tabWeek: tabWeek, pushPoints: pushPoints, updatedAt: data.updatedAt, teams: TEAMS
+    };
+  }
+
+  var api = { build: build, parsePicks: parsePicks, teamAbbr: teamAbbr, TEAMS: TEAMS, normName: normName };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+  else root.PickEngine = api;
+})(this);
+
+</script>
+<script>
+(function () {
+  'use strict';
+  var E = window.PickEngine, T = E.TEAMS;
+  var $ = function (id) { return document.getElementById(id); };
+  var model = null, data = null;
+  var ui = { view: 'season', open: {} };
+  var TZ = 'America/Chicago';
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function nick(a) { return T[a] ? T[a][0] : a; }
+  function fmtLine(n) { return n === 0 ? 'PK' : (n > 0 ? '+' : '\u2212') + Math.abs(n); }
+  function pickLabel(p) {
+    if (p.kind === 'side') return (T[p.team] ? T[p.team][0] : p.teamNick) + ' ' + fmtLine(p.line);
+    if (p.kind === 'total') return (p.ou === 'O' ? 'Over ' : 'Under ') + p.line;
+    return p.raw;
+  }
+  function matchup(g) { return g ? nick(g.away) + ' at ' + nick(g.home) : ''; }
+  function plural(n, one, many) { return n + ' ' + (n === 1 ? one : (many || one + 's')); }
+  var WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+  function word(n) { return WORDS[n] || String(n); }
+  function listNames(arr) {
+    var n = arr.map(function (p) { return p.name; });
+    if (n.length <= 1) return n.join('');
+    if (n.length === 2) return n[0] + ' and ' + n[1];
+    return n.slice(0, -1).join(', ') + ', and ' + n[n.length - 1];
+  }
+  function kickoff(g) {
+    var m = String(g.timeET || '').match(/(\d{1,2}):(\d{2})/);
+    if (!m) return g.weekday ? g.weekday.slice(0, 3) : '';
+    var mins = (parseInt(m[1], 10) - 1) * 60 + parseInt(m[2], 10);
+    var h = Math.floor(mins / 60), mm = mins % 60, ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return (g.weekday || '').slice(0, 3) + ' ' + h + (mm ? ':' + String(mm).padStart(2, '0') : '') + ' ' + ap;
+  }
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function dateRange(a, b) {
+    if (!a) return '';
+    var x = a.split('-').map(Number), y = (b || a).split('-').map(Number);
+    var s = MONTHS[x[1] - 1] + ' ' + x[2];
+    if (a === b || !b) return s;
+    return s + '\u2013' + (y[1] === x[1] ? '' : MONTHS[y[1] - 1] + ' ') + y[2];
+  }
+  function fmtUpdated(iso) {
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    try {
+      return new Intl.DateTimeFormat('en-US', { timeZone: TZ, weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(d) + ' CT';
+    } catch (e) { return d.toLocaleString(); }
+  }
+
+  function chicagoNoon(dateStr) {
+    var p = dateStr.split('-').map(Number);
+    var t = Date.UTC(p[0], p[1] - 1, p[2], 17, 0);
+    try {
+      var h = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: TZ, hour: 'numeric', hourCycle: 'h23' }).format(new Date(t)), 10);
+      if (!isNaN(h) && h !== 12) t += (12 - h) * 3600000;
+    } catch (e) {}
+    return t;
+  }
+  function revealAt(w) {
+    var sun = null;
+    (data.games || []).forEach(function (g) {
+      if (g.week === w.week && g.weekday === 'Sunday' && (!sun || g.date < sun)) sun = g.date;
+    });
+    return sun ? chicagoNoon(sun) : 0;
+  }
+  function locked(w) { return Date.now() < revealAt(w) || w.entries.some(function (e) { return e.hidden; }); }
+  function kickoffAt(g) {
+    var p = String(g.date || '').split('-').map(Number), m = String(g.timeET || '').match(/(\d{1,2}):(\d{2})/);
+    if (p.length < 3 || !m) return 0;
+    var hh = parseInt(m[1], 10), u = Date.UTC(p[0], p[1] - 1, p[2], hh + 4, parseInt(m[2], 10));
+    try {
+      var h = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hourCycle: 'h23' }).format(new Date(u)), 10);
+      if (!isNaN(h) && h !== hh) u += 3600000;
+    } catch (e) {}
+    return u;
+  }
+  function underway(g) { var k = kickoffAt(g); return k && Date.now() >= k; }
+  function whenText(g) { return underway(g) ? 'Under way, waiting on the final' : kickoff(g); }
+  var LOCK_NOTE = 'Picks stay hidden until noon Sunday (Central), when they all show up here.';
+
+  var GLYPH = {
+    W: '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.3 4.1 7.4 8 3"/></svg>',
+    L: '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M3 3l4 4M7 3 3 7"/></svg>',
+    P: '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2.8 5h4.4"/></svg>',
+    void: '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2.5 7.5l5-5"/></svg>'
+  };
+  function liveInfo(g) { return g && data.live && data.live[g.id]; }
+  function pickState(p) {
+    if (p.state === 'final') return p.res;
+    if (p.state === 'live') return 'live';
+    if (p.state === 'void') return 'void';
+    return 'pending';
+  }
+  function dot(p) {
+    var st = pickState(p);
+    var tip = pickLabel(p) + (p.game ? ' (' + matchup(p.game) + ')' : '') + ': ' + resultWords(p);
+    var inner = GLYPH[st] || '';
+    return '<span class="dot ' + st + '" title="' + esc(tip) + '">' + inner + '</span>';
+  }
+  function sortPicks(ps) {
+    return ps.slice().sort(function (a, b) {
+      return (a.g || 0) - (b.g || 0) || (a.kind === 'side' ? 0 : 1) - (b.kind === 'side' ? 0 : 1);
+    });
+  }
+  function dots(entry) {
+    return '<span class="dots">' + sortPicks(entry.picks).map(dot).join('') + '</span>';
+  }
+  function resultWords(p) {
+    var g = p.game;
+    if (p.state === 'void') return 'not counted';
+    if (!g) return 'game not found';
+    var as, hs;
+    if (p.state === 'final') { as = g.awayScore; hs = g.homeScore; }
+    else if (p.state === 'live') { var L = liveInfo(g); as = L.awayScore; hs = L.homeScore; }
+    else return underway(g) ? 'Waiting on the final' : kickoff(g);
+    var m = Math.abs(p.margin);
+    var mtxt = String(m % 1 ? m.toFixed(1) : m);
+    if (p.state === 'live') {
+      if (p.kind === 'total') return 'Live: total ' + (as + hs) + ', ' + (p.res === 'W' ? 'on track' : 'not there yet');
+      return 'Live: ' + (p.res === 'W' ? 'covering' : p.res === 'P' ? 'on the number' : 'not covering');
+    }
+    if (p.res === 'P') return 'Push';
+    if (p.kind === 'total') return 'Total ' + (as + hs) + (p.res === 'W' ? ' \u2713' : '');
+    return (p.res === 'W' ? 'Covered by ' : 'Missed by ') + mtxt;
+  }
+  function scoreText(g, live) {
+    if (live) return g.away + ' ' + live.awayScore + ' \u2013 ' + live.homeScore + ' ' + g.home;
+    return g.away + ' ' + g.awayScore + ' \u2013 ' + g.homeScore + ' ' + g.home;
+  }
+
+  /* ---------- views ---------- */
+  function weekStatus(w) {
+    var total = w.final + w.live + w.pending;
+    if (w.done) return 'All ' + total + ' games final';
+    var bits = [w.final + ' of ' + total + ' final'];
+    if (w.live) bits.push(w.live + ' live');
+    if (w.pending) bits.push(w.pending + ' to play');
+    return bits.join(' \u00b7 ');
+  }
+
+  function stillToPlay(w, limit) {
+    var nums = Object.keys(w.games).map(Number).sort(function (a, b) { return a - b; })
+      .filter(function (n) { return w.gameState[n] !== 'final'; });
+    if (!nums.length) return '';
+    var html = '<ul class="games">';
+    nums.slice(0, limit || nums.length).forEach(function (n) {
+      var g = w.games[n], L = w.gameState[n] === 'live' ? liveInfo(g) : null;
+      var groups = {};
+      w.entries.forEach(function (e) {
+        e.picks.forEach(function (p) {
+          if (p.g !== n || p.state === 'void') return;
+          var k = pickLabel(p);
+          var grp = groups[k] = groups[k] || { label: k, names: [], p: p };
+          grp.names.push(model.players[e.pid].name);
+        });
+      });
+      var gl = Object.keys(groups).map(function (k) { return groups[k]; })
+        .sort(function (a, b) { return b.names.length - a.names.length || a.label.localeCompare(b.label); });
+      html += '<li class="game"><div class="game-head"><span class="game-name">' + esc(matchup(g)) + '</span>' +
+        (L ? '<span class="game-when is-live">Live \u00b7 ' + esc([L.period, L.clock].filter(Boolean).join(' ')) + '</span>'
+           : '<span class="game-when">' + esc(whenText(g)) + '</span>') + '</div>';
+      if (L) html += '<div class="scoreline">' + esc(scoreText(g, L)) + '</div>';
+      if (gl.length) {
+        html += '<ul class="splits">';
+        gl.forEach(function (grp) {
+          var cls = L ? ' now-' + grp.p.res : '';
+          var tag = L ? '<span class="split-state">' + (grp.p.res === 'W' ? 'winning' : grp.p.res === 'L' ? 'losing' : 'push') + '</span>' : '';
+          html += '<li class="split' + cls + '"><span class="split-pick">' + esc(grp.label) + tag + '</span>' +
+            '<span class="split-n">' + grp.names.length + '</span>' +
+            '<span class="split-who">' + esc(grp.names.join(', ')) + '</span></li>';
+        });
+        html += '</ul>';
+      } else {
+        html += '<div class="note">Nobody picked this one.</div>';
+      }
+      html += '</li>';
+    });
+    html += '</ul>';
+    return html;
+  }
+
+  function weekLeadLine(w) {
+    if (!w.entries.length) return '';
+    var leaders = w.leaders.map(function (pid) { return model.players[pid]; });
+    var names = listNames(leaders);
+    if (w.done) return names + ' won the week with ' + w.top + '.';
+    var verb = leaders.length > 1 ? ' lead the week with ' : ' leads the week with ';
+    var best = 0, bestP = [];
+    w.entries.forEach(function (e) {
+      if (e.tally.max > best) { best = e.tally.max; bestP = [e]; }
+      else if (e.tally.max === best) bestP.push(e);
+    });
+    var tail = '';
+    if (best > w.top) {
+      var chasers = bestP.map(function (e) { return model.players[e.pid]; });
+      tail = ' The best anyone can finish is ' + best + ' (' + listNames(chasers) + ').';
+    }
+    return names + verb + w.top + '.' + tail;
+  }
+
+  function seasonView() {
+    var w = model.current, h = '';
+    if (w && locked(w)) {
+      h += '<section class="sheet now" aria-labelledby="now-h">' +
+        '<div class="now-head"><h2 id="now-h">Week ' + w.week + '</h2><span class="chip">Picks coming in</span></div>' +
+        '<p class="now-lead">' + esc(plural(w.entries.length, 'entry', 'entries') + ' in so far: ' +
+          listNames(w.entries.map(function (e) { return model.players[e.pid]; }))) + '.</p>' +
+        '<p class="note" style="margin:0 0 12px">' + esc(LOCK_NOTE) + '</p></section>';
+    } else if (w) {
+      h += '<section class="sheet now" aria-labelledby="now-h">' +
+        '<div class="now-head"><h2 id="now-h">Week ' + w.week + '</h2>' +
+        '<span class="chip' + (w.live ? ' is-live' : '') + '">' + esc(weekStatus(w)) + '</span></div>' +
+        '<p class="now-lead">' + esc(weekLeadLine(w)) + '</p>' +
+        stillToPlay(w) +
+        '<p style="margin:8px 0 10px"><button class="link" data-go="w' + w.week + '">All Week ' + w.week + ' picks</button></p>' +
+        '</section>';
+    }
+    h += '<section aria-labelledby="st-h"><div class="h2-row"><h2 id="st-h">Season standings</h2>' +
+      '<span class="note">Tap a name for every week&rsquo;s picks</span></div>' +
+      '<ol class="sheet board"><li aria-hidden="true"><div class="row-btn board-head"><span class="rank"></span>' +
+      '<span class="who">Player</span><span class="strip">' +
+      model.weeks.map(function (wk) { return '<span class="wk-h">W' + wk.week + '</span>'; }).join('') +
+      '</span><span class="total">Pts</span></div></li>';
+    var leaderTotal = model.standings.length ? model.standings[0].total : 0;
+    model.standings.forEach(function (p) {
+      var open = ui.open['s:' + p.pid];
+      var back = leaderTotal - p.total;
+      var cw = model.current && p.weeks[model.current.week];
+      var sub = p.rank === 1 ? (p.tied ? 'Tied for first' : 'First place') : back + ' back';
+      if (cw && cw.tally.open) sub += ' \u00b7 ' + cw.tally.open + ' still in play';
+      var strip = model.weeks.map(function (wk) {
+        var pw = p.weeks[wk.week];
+        if (!pw) return '<span class="wk out" title="Week ' + wk.week + ': no picks">\u2013</span>';
+        var cls = 'wk';
+        if (wk.done && wk.leaders.indexOf(p.pid) >= 0) cls += ' top';
+        if (pw.tally.open) cls += ' open';
+        var t = 'Week ' + wk.week + ': ' + pw.tally.pts + (pw.tally.open ? ' so far, ' + pw.tally.open + ' still in play' : '') + (cls.indexOf('top') >= 0 ? ' (week winner)' : '');
+        return '<span class="' + cls + '" title="' + esc(t) + '">' + pw.tally.pts + '</span>';
+      }).join('');
+      var rank = (p.tied ? '<small>T</small>' : '') + p.rank;
+      h += '<li><button class="row-btn" data-toggle="s:' + p.pid + '" aria-expanded="' + (open ? 'true' : 'false') + '">' +
+        '<span class="rank">' + rank + '</span>' +
+        '<span class="who"><span class="nm">' + (p.rank === 1 ? '<span class="hl">' + esc(p.name) + '</span>' : esc(p.name)) + '</span>' +
+        '<span class="sub">' + esc(sub) + '</span></span>' +
+        '<span class="strip" aria-label="Points by week">' + strip + '</span>' +
+        '<span class="total">' + p.total + '</span>' +
+        '</button>';
+      if (open) h += playerDetail(p);
+      h += '</li>';
+    });
+    h += '</ol>';
+    h += '<p class="note" style="margin:8px 2px 0">A highlighted box was that week&rsquo;s top score. An orange outline means picks are still in play.</p></section>';
+    return h;
+  }
+
+  function playerDetail(p) {
+    var graded = p.w + p.l;
+    var pct = graded ? Math.round(100 * p.w / graded) : 0;
+    var best = null;
+    model.weeks.forEach(function (wk) {
+      var pw = p.weeks[wk.week];
+      if (pw && wk.done && (!best || pw.tally.pts > best.pts)) best = { pts: pw.tally.pts, wk: wk.week };
+    });
+    var bits = [p.w + '\u2013' + p.l + (p.p ? '\u2013' + p.p : '') + ' on graded picks (' + pct + '%)'];
+    if (best) bits.push('best week ' + best.pts + ' in Week ' + best.wk);
+    var wins = model.weeks.filter(function (wk) { return wk.done && wk.leaders.indexOf(p.pid) >= 0; }).length;
+    if (wins) bits.push(plural(wins, 'week won'));
+    var h = '<div class="detail"><p>' + esc(bits.join(' \u00b7 ')) + '.' +
+      (p.aka.length ? ' Also played as ' + esc(p.aka.join(', ')) + '.' : '') + '</p><ol class="wkcards">';
+    model.weeks.forEach(function (wk) {
+      var pw = p.weeks[wk.week];
+      h += '<li class="wkcard"><span class="wkcard-l">Wk ' + wk.week + '</span>' +
+        (pw ? (locked(wk) ? '<span class="note">Hidden until Sunday noon</span>' : dots(pw.entry)) : '<span class="note">No picks</span>') +
+        '<span class="wkcard-n">' + (pw ? pw.tally.pts : '') + '</span></li>';
+    });
+    return h + '</ol></div>';
+  }
+
+  function weekView(wkNum) {
+    var w = model.weeks.filter(function (x) { return x.week === wkNum; })[0];
+    if (!w) return '<div class="sheet empty">No picks for that week yet.</div>';
+    if (locked(w)) {
+      var lh = '<section><div class="h2-row"><h2>Week ' + w.week + '</h2><span class="chip">Picks coming in</span></div>' +
+        '<div class="week-meta"><span>' + esc(dateRange(w.firstDate, w.lastDate)) + '</span><span>' +
+        plural(w.entries.length, 'entry', 'entries') + ' in</span></div>' +
+        '<p class="now-lead">' + esc(LOCK_NOTE) + '</p></section><section><ol class="sheet board">';
+      w.entries.slice().sort(function (a, b) { return a.ts - b.ts; }).forEach(function (e) {
+        lh += '<li><div class="entry-btn board-head" style="text-transform:none;letter-spacing:0;font-size:14px">' +
+          '<span class="rank"></span><span class="who"><span class="nm" style="color:var(--ink)">' + esc(model.players[e.pid].name) +
+          '</span><span class="sub">Picks in ' + esc(e.at) + '</span></span><span class="dots-h"></span><span class="total"></span></div></li>';
+      });
+      return lh + '</ol></section>';
+    }
+    var h = '<section><div class="h2-row"><h2>Week ' + w.week + '</h2>' +
+      '<span class="chip' + (w.live ? ' is-live' : '') + '">' + esc(weekStatus(w)) + '</span></div>' +
+      '<div class="week-meta"><span>' + esc(dateRange(w.firstDate, w.lastDate)) + '</span><span>' +
+      plural(w.entries.length, 'player') + '</span></div>' +
+      '<p class="now-lead">' + esc(weekLeadLine(w)) + '</p></section>';
+    if (!w.done) {
+      h += '<section class="sheet now"><h2>Still to play</h2>' + stillToPlay(w) + '</section>';
+    }
+    h += '<section aria-label="Week ' + w.week + ' scores"><ol class="sheet board">' +
+      '<li aria-hidden="true"><div class="entry-btn board-head"><span class="rank"></span><span class="who">Player</span>' +
+      '<span class="dots-h">Picks in game order</span><span class="total">Pts</span></div></li>';
+    w.entries.forEach(function (e) {
+      var key = 'w' + w.week + ':' + e.pid, open = ui.open[key], t = e.tally;
+      var rec = t.w + '\u2013' + t.l + (t.p ? '\u2013' + t.p : '') + (t.open ? ' \u00b7 ' + t.open + ' in play' : '');
+      var nm = model.players[e.pid].name;
+      var isTop = w.leaders.indexOf(e.pid) >= 0 && t.pts > 0;
+      h += '<li><button class="entry-btn" data-toggle="' + esc(key) + '" aria-expanded="' + (open ? 'true' : 'false') + '">' +
+        '<span class="rank">' + (e.tied ? '<small>T</small>' : '') + e.rank + '</span>' +
+        '<span class="who"><span class="nm">' + (isTop ? '<span class="hl">' + esc(nm) + '</span>' : esc(nm)) + '</span>' +
+        '<span class="sub">' + esc(rec) + '</span></span>' +
+        dots(e) +
+        '<span class="total">' + t.pts + '</span></button>';
+      if (open) {
+        h += '<ul class="picks">';
+        sortPicks(e.picks).forEach(function (p) {
+          var st = pickState(p);
+          h += '<li class="pk">' + dot(p) + '<span><span class="pk-what">' + esc(pickLabel(p)) + '</span>' +
+            '<span class="pk-game">G' + p.g + ' \u00b7 ' + esc(matchup(p.game)) + '</span></span>' +
+            '<span class="pk-res ' + (st === 'W' || st === 'L' ? st : st === 'live' ? 'live' : '') + '">' + esc(resultWords(p)) + '</span></li>';
+        });
+        h += '</ul>';
+      }
+      h += '</li>';
+    });
+    h += '</ol></section>';
+    h += '<section aria-labelledby="res-h"><h2 id="res-h">Game results</h2><ol class="sheet results">' + resultsList(w) + '</ol></section>';
+    return h;
+  }
+
+  function resultsList(w) {
+    var h = '';
+    Object.keys(w.games).map(Number).sort(function (a, b) { return a - b; }).forEach(function (n) {
+      var g = w.games[n], st = w.gameState[n], L = st === 'live' ? liveInfo(g) : null;
+      var side = null, total = null, picks = 0, won = 0;
+      w.entries.forEach(function (e) {
+        e.picks.forEach(function (p) {
+          if (p.g !== n || p.state === 'void') return;
+          picks++;
+          if (p.state === 'final' && p.res === 'W') won++;
+          if (p.kind === 'side' && side == null) side = p;
+          if (p.kind === 'total' && total == null) total = p;
+        });
+      });
+      var line = '';
+      if (st === 'final') {
+        line = '<b>' + g.awayScore + '</b> ' + esc(nick(g.away)) + ' at ' + esc(nick(g.home)) + ' <b>' + g.homeScore + '</b>';
+      } else if (L) {
+        line = esc(matchup(g)) + ' \u00b7 <span style="color:var(--live)">' + esc(scoreText(g, L)) + ' ' + esc(L.period || '') + '</span>';
+      } else {
+        line = esc(matchup(g)) + ' \u00b7 ' + esc(whenText(g));
+      }
+      var bits = [];
+      if (side) {
+        // express the spread from the favourite's side
+        var favHome = side.role === 'home' ? side.line < 0 : side.line > 0;
+        var fav = favHome ? g.home : g.away, dog = favHome ? g.away : g.home;
+        var x = Math.abs(side.line);
+        var txt = x === 0 ? 'Pick\u2019em' : nick(fav) + ' \u2212' + x;
+        if (st === 'final') {
+          var fm = (favHome ? g.homeScore - g.awayScore : g.awayScore - g.homeScore) - x;
+          if (fm > 0) bits.push('<span class="ok">' + esc(nick(fav)) + ' \u2212' + x + ' covered</span>');
+          else if (fm < 0) bits.push('<span class="ok">' + esc(nick(dog)) + ' +' + x + ' covered</span>');
+          else bits.push('<span class="pu">' + esc(txt) + ' pushed</span>');
+        } else bits.push(esc(txt));
+      }
+      if (total) {
+        if (st === 'final') {
+          var sum = g.awayScore + g.homeScore;
+          bits.push(sum === total.line ? '<span class="pu">Push on ' + total.line + '</span>'
+            : '<span class="ok">' + (sum > total.line ? 'Over ' : 'Under ') + total.line + '</span> (' + sum + ')');
+        } else bits.push('O/U ' + total.line);
+      }
+      if (picks) bits.push(st === 'final' ? won + ' of ' + picks + ' picks won' : plural(picks, 'pick'));
+      h += '<li class="res"><span class="res-g">G' + n + '</span><span class="res-m">' + line + '</span>' +
+        '<span class="res-l">' + bits.map(function (b) { return '<span>' + b + '</span>'; }).join('') + '</span></li>';
+    });
+    return h || '<li class="empty">No games matched yet.</li>';
+  }
+
+  function story() {
+    var s = model.standings;
+    if (!s.length) return 'No picks yet.';
+    var top = s.filter(function (p) { return p.rank === 1; });
+    var rest = s.filter(function (p) { return p.rank !== 1; });
+    var out;
+    if (top.length > 1) out = listNames(top) + ' are tied for first at ' + top[0].total + '.';
+    else if (!rest.length) out = top[0].name + ' leads.';
+    else {
+      var gap = top[0].total - rest[0].total;
+      var next = rest.filter(function (p) { return p.total === rest[0].total; });
+      out = top[0].name + ' leads by ' + word(gap) + '. ' + listNames(next) + (next.length > 1 ? ' are ' : ' is ') + word(gap) + ' back';
+      var close = s.filter(function (p) { return s[0].total - p.total <= 4; }).length;
+      out += close >= Math.ceil(s.length / 2) && close > next.length + 1 ? ', and ' + close + ' of ' + s.length + ' players are within four.' : '.';
+    }
+    return out;
+  }
+
+  function renderTabs() {
+    var cur = model.current;
+    var h = '<button class="tab" role="tab" data-go="season" aria-selected="' + (ui.view === 'season') + '">Season</button>';
+    model.weeks.slice().reverse().forEach(function (w) {
+      var live = !w.done && w === cur && w.live;
+      h += '<button class="tab' + (live ? ' is-live' : '') + '" role="tab" data-go="w' + w.week + '" aria-selected="' + (ui.view === 'w' + w.week) + '">Wk ' + w.week + '</button>';
+    });
+    $('tabs').innerHTML = h;
+    var sel = $('tabs').querySelector('[aria-selected="true"]');
+    if (sel && sel.scrollIntoView) { try { sel.scrollIntoView({ block: 'nearest', inline: 'nearest' }); } catch (e) {} }
+  }
+
+  function renderMeta() {
+    var bits = [];
+    if (model.current) bits.push('<span>Through Week ' + model.current.week + '</span>');
+    if (data.updatedAt) bits.push('<span>Updated ' + esc(fmtUpdated(data.updatedAt)) + '</span>');
+    var lives = Object.keys(data.live || {});
+    if (lives.length) {
+      var g = (data.games || []).filter(function (x) { return x.id === lives[0]; })[0];
+      if (g) {
+        var L = data.live[g.id];
+        bits.push('<span class="live-pill">Live ' + esc(scoreText(g, L)) + (L.period ? ' \u00b7 ' + esc(L.period) : '') + '</span>');
+      }
+    }
+    $('meta').innerHTML = bits.join('');
+  }
+
+  function render() {
+    $('story').textContent = story();
+    renderMeta();
+    renderTabs();
+    var v = ui.view;
+    $('view').innerHTML = v === 'season' ? seasonView() : weekView(parseInt(v.slice(1), 10));
+    $('pushrule').textContent = model.pushPoints ? 'A push scores ' + model.pushPoints + '.' : 'A push scores zero.';
+    $('legend').innerHTML =
+      '<span><span class="dot W">' + GLYPH.W + '</span>Won</span>' +
+      '<span><span class="dot L">' + GLYPH.L + '</span>Lost</span>' +
+      '<span><span class="dot P">' + GLYPH.P + '</span>Push</span>' +
+      '<span><span class="dot live"></span>Live</span>' +
+      '<span><span class="dot pending"></span>Not played yet</span>';
+  }
+
+  function go(view) {
+    ui.view = view;
+    try { history.replaceState(null, '', '#' + view); } catch (e) {}
+    render();
+    try { window.scrollTo({ top: 0 }); } catch (e) {}
+  }
+
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest('[data-go],[data-toggle]');
+    if (!t) return;
+    if (t.hasAttribute('data-go')) { go(t.getAttribute('data-go')); return; }
+    var k = t.getAttribute('data-toggle');
+    ui.open[k] = !ui.open[k];
+    var y = window.scrollY;
+    render();
+    try { window.scrollTo({ top: y }); } catch (e) {}
+    var again = document.querySelector('[data-toggle="' + (window.CSS && CSS.escape ? CSS.escape(k) : k) + '"]');
+    if (again) again.focus({ preventScroll: true });
+  });
+
+  function start() {
+    fetch('data.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (d) {
+      data = d;
+      model = E.build(d);
+      var h = (location.hash || '').replace('#', '');
+      if (/^w\d+$/.test(h) && model.weeks.some(function (w) { return 'w' + w.week === h; })) ui.view = h;
+      render();
+    }).catch(function () {
+      $('story').textContent = 'The standings didn\u2019t load. Reopen the page to try again.';
+      $('view').innerHTML = '';
+    });
+  }
+  start();
+  function poll() {
+    if (document.hidden || !data) return;
+    fetch('data.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+      return r.ok ? r.json() : null;
+    }).then(function (d) {
+      if (!d || d.updatedAt === data.updatedAt) return;
+      data = d;
+      model = E.build(d);
+      var y = window.scrollY;
+      render();
+      try { window.scrollTo({ top: y }); } catch (e) {}
+    }).catch(function () {});
+  }
+  setInterval(poll, 60000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) poll(); });
+})();
+</script>
+</body>
+</html>

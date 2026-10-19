@@ -1,0 +1,65 @@
+{
+  "pushPoints": 0,
+  "void": [],
+  "players": {
+    "brandon": {
+      "name": "Brandon",
+      "aliases": [
+        "Losing Hair Do Care",
+        "Losing hair"
+      ]
+    },
+    "fin": {
+      "name": "Fin Diesel",
+      "aliases": [
+        "Fin It to Win it"
+      ]
+    },
+    "pump": {
+      "name": "Pump up the Gam",
+      "aliases": []
+    },
+    "hollywood": {
+      "name": "Hollywood",
+      "aliases": [
+        "Hollywood #27",
+        "Hollywood  #27"
+      ]
+    },
+    "longhair": {
+      "name": "Long Hair Don't Care",
+      "aliases": [
+        "Long Hair"
+      ]
+    },
+    "bossbaby": {
+      "name": "Boss Baby",
+      "aliases": []
+    },
+    "bigcheese": {
+      "name": "Big Cheese",
+      "aliases": []
+    },
+    "glamorace": {
+      "name": "Glamorace",
+      "aliases": []
+    },
+    "supermax": {
+      "name": "Super Max",
+      "aliases": []
+    },
+    "jet": {
+      "name": "Jet",
+      "aliases": [
+        "Jet 2 Holiday"
+      ]
+    },
+    "koala": {
+      "name": "Koala Bears",
+      "aliases": [
+        "The Koala Bears",
+        "Mr Miyagi"
+      ]
+    }
+  }
+}
