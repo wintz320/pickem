@@ -2,7 +2,8 @@
 """Rebuild data.json for the pick'em site.
 
 Inputs (fetched fresh on every run):
-  - the weekly Google Form responses ("Form Responses N" tabs) from the pick sheet
+  - the week's picks from the pick sheet: "Picks Wk N" tabs written by the pick page's sheet script,
+    and "Form Responses N" tabs from the Google Forms used before that
   - final scores for the season (nflverse, an open NFL data project)
   - live and just-finished games for the current week (ESPN's public scoreboard feed)
 The page grades every pick itself; this script only gathers raw inputs.
@@ -73,7 +74,7 @@ def cell(v):
 
 
 def sheet_tabs():
-    """All 'Form Responses N' tabs from the pick sheet, as rows of [timestamp, name, picks]."""
+    """All 'Picks Wk N' and 'Form Responses N' tabs from the pick sheet, as rows of [timestamp, name, picks]."""
     path = os.environ.get("PICKEM_XLSX")
     if path:
         raw = open(path, "rb").read()
@@ -89,7 +90,7 @@ def sheet_tabs():
     tabs = {}
     for ws in wb.worksheets:
         title = ws.title.strip()
-        if not re.fullmatch(r"Form Responses \d+", title):
+        if not re.fullmatch(r"Form Responses \d+|Picks Wk \d+", title):
             continue
         rows = [[cell(v) for v in (list(r) + [None, None, None])[:3]]
                 for r in ws.iter_rows(min_col=1, max_col=3, values_only=True)]
@@ -223,12 +224,13 @@ def main():
         by_week.setdefault(g["week"], []).append(g)
     public_tabs, tab_weeks, withheld = {}, {}, []
     for title, rows in tabs.items():
-        wk = tab_week(rows, by_week)
+        named = re.fullmatch(r"Picks Wk (\d+)", title)
+        wk = int(named.group(1)) if named else tab_week(rows, by_week)
         if wk is None:
             public_tabs[title] = rows
             continue
         tab_weeks[title] = wk
-        reveal = reveal_time(by_week[wk])
+        reveal = reveal_time(by_week.get(wk, []))
         if reveal and now < reveal:
             public_tabs[title] = [rows[0]] + [[r[0], r[1], "HIDDEN" if (r[2] or "").strip() else ""] for r in rows[1:]]
             withheld.append(title)

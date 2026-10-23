@@ -16,6 +16,7 @@ on:
     branches: [main]
     paths:
       - index.html
+      - picks.html
       - config.json
       - scripts/**
       - .github/workflows/update.yml
@@ -57,7 +58,7 @@ jobs:
         if: steps.build.outputs.changed == 'true' || github.event_name != 'schedule'
         run: |
           mkdir -p _site
-          cp index.html data.json _site/
+          cp index.html picks.html data.json _site/
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         if: steps.build.outputs.changed == 'true' || github.event_name != 'schedule'

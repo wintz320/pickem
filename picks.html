@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Make Your Picks</title>
+<meta name="description" content="Make this week's 15 picks for the family NFL pick'em.">
+<meta property="og:title" content="Make Your Picks">
+<meta property="og:description" content="This week's games, lines and logos. Pick 15.">
+<meta name="theme-color" content="#EDF0EB">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<style>
+/* Layout: the office pick sheet, one card per game. Logos sit on white discs so they read in
+   both themes; ballpoint blue marks what you've picked; a bar at the bottom counts to 15. */
+:root {
+  --paper: #EDF0EB;
+  --sheet: #FBFCFA;
+  --ink: #131B2E;
+  --ink-soft: #525C70;
+  --rule: #D3D9D1;
+  --cell: rgba(19, 27, 46, .055);
+  --pen: #2347D6;
+  --pick-bg: #2347D6;
+  --pick-fg: #FFFFFF;
+  --logo-bg: #FFFFFF;
+  --logo-rule: rgba(19, 27, 46, .12);
+  --win: #11804A;
+  --display: "Big Shoulders Display", "Big Shoulders", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0E131B; --sheet: #151C27; --ink: #E7ECF3; --ink-soft: #98A3B5; --rule: #283246;
+    --cell: rgba(231, 236, 243, .07); --pen: #8DA8FF; --pick-bg: #3A5BE0; --pick-fg: #FFFFFF;
+    --logo-bg: #F4F6F8; --logo-rule: rgba(0, 0, 0, .25); --win: #3FB874;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0E131B; --sheet: #151C27; --ink: #E7ECF3; --ink-soft: #98A3B5; --rule: #283246;
+  --cell: rgba(231, 236, 243, .07); --pen: #8DA8FF; --pick-bg: #3A5BE0; --pick-fg: #FFFFFF;
+  --logo-bg: #F4F6F8; --logo-rule: rgba(0, 0, 0, .25); --win: #3FB874;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 15px; line-height: 1.45; -webkit-text-size-adjust: 100%;
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+[hidden] { display: none !important; }
+.wrap {
+  max-width: 760px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+button { font: inherit; color: inherit; }
+
+.mast { padding-block: 18px 4px; }
+.back { font-size: 13.5px; font-weight: 650; color: var(--pen); text-decoration: none; }
+.back:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
+.eyebrow { margin-top: 14px; font-size: 11px; font-weight: 650; letter-spacing: .13em; text-transform: uppercase; color: var(--ink-soft); }
+h1 {
+  font-family: var(--display); font-weight: 900; text-transform: uppercase;
+  font-size: clamp(44px, 12vw, 70px); line-height: .86; letter-spacing: .005em; margin: 6px 0 0;
+}
+.lead { margin: 10px 0 0; font-size: 16px; line-height: 1.4; max-width: 56ch; text-wrap: pretty; }
+.banner { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--cell); font-size: 13.5px; max-width: 60ch; }
+h2 {
+  font-family: var(--display); font-weight: 800; text-transform: uppercase;
+  font-size: 24px; line-height: 1; letter-spacing: .015em; margin: 26px 0 10px;
+}
+
+.names { display: flex; flex-wrap: wrap; gap: 6px; }
+.name {
+  display: inline-flex; align-items: center; gap: 7px; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--sheet); border-radius: 999px;
+  padding: 8px 13px; font-weight: 650; font-size: 14px; font-stretch: 94%;
+}
+.name:hover { border-color: var(--pen); }
+.name:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
+.name[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.name .in { width: 7px; height: 7px; border-radius: 50%; background: var(--win); flex: none; }
+.note { font-size: 12.5px; color: var(--ink-soft); margin: 8px 0 0; }
+
+.day { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin: 20px 0 8px; }
+.games { display: grid; gap: 10px; }
+.gc { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 10px; display: grid; gap: 8px; min-width: 0; }
+.gc-meta { display: flex; justify-content: space-between; gap: 8px; padding: 0 2px; font-size: 12px; font-weight: 650; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.gc-sides { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 6px; align-items: stretch; }
+.at { align-self: center; font-size: 11.5px; font-weight: 700; color: var(--ink-soft); }
+.gc-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.opt {
+  position: relative; min-width: 0; cursor: pointer; text-align: left;
+  border: 1.5px solid var(--rule); background: var(--paper); border-radius: 10px;
+}
+.opt:hover:not(:disabled) { border-color: var(--pen); }
+.opt:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
+.opt.team { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 8px; padding: 8px 10px 8px 7px; }
+.logo {
+  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; overflow: hidden;
+  background: var(--logo-bg); box-shadow: inset 0 0 0 1px var(--logo-rule);
+  color: #131B2E; font-size: 11px; font-weight: 800; letter-spacing: .02em;
+}
+.logo img { width: 32px; height: 32px; object-fit: contain; display: block; }
+.tm { display: grid; min-width: 0; }
+.tm-name { font-weight: 700; font-size: 14.5px; font-stretch: 92%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tm-line { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1; font-variant-numeric: tabular-nums; }
+.opt.tot { padding: 9px 10px; text-align: center; font-weight: 650; font-size: 14px; }
+.opt.tot b { font-family: var(--display); font-weight: 800; font-size: 19px; margin-left: 4px; font-variant-numeric: tabular-nums; }
+.opt.on { background: var(--pick-bg); color: var(--pick-fg); border-color: var(--pick-bg); }
+.tick {
+  position: absolute; top: -7px; right: -7px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--pick-bg); border: 2px solid var(--sheet); display: none; place-items: center;
+}
+.opt.on .tick { display: grid; }
+.tick svg { width: 10px; height: 10px; fill: none; stroke: var(--pick-fg); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.opt:disabled { cursor: not-allowed; }
+.gc.locked .opt { opacity: .45; }
+.gc.locked .opt.on { opacity: .75; }
+.gc.noline .opt { opacity: .45; }
+
+.done { margin-top: 18px; padding: 14px; background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; }
+.done h2 { margin: 0 0 6px; }
+.done p { margin: 0; }
+.done ul { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+.done li { background: var(--cell); border-radius: 6px; padding: 4px 8px; font-size: 13px; font-weight: 650; }
+.link { background: none; border: 0; padding: 0; cursor: pointer; color: var(--pen); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+
+.bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: var(--sheet); border-top: 1px solid var(--rule);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bar-in { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 10px; }
+.count { display: grid; gap: 5px; font-size: 13px; color: var(--ink-soft); }
+.count b { font-family: var(--display); font-size: 26px; line-height: .9; color: var(--ink); font-variant-numeric: tabular-nums; }
+.meter { display: grid; grid-template-columns: repeat(15, 1fr); gap: 2px; width: 150px; max-width: 40vw; }
+.meter i { height: 5px; border-radius: 2px; background: var(--rule); }
+.meter i.f { background: var(--pick-bg); }
+.submit {
+  border: 0; border-radius: 10px; cursor: pointer; white-space: nowrap;
+  background: var(--pick-bg); color: var(--pick-fg); font-weight: 750; font-size: 15px; padding: 12px 18px;
+}
+.submit:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
+.submit:disabled { background: var(--cell); color: var(--ink-soft); cursor: not-allowed; }
+.toast {
+  position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); z-index: 30;
+  transform: translateX(-50%); max-width: calc(100% - 32px); width: max-content;
+  background: var(--ink); color: var(--paper); padding: 10px 14px; border-radius: 10px;
+  font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.toast.show { opacity: 1; }
+.empty { padding: 26px 14px; text-align: center; color: var(--ink-soft); background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; }
+footer { margin-top: 26px; padding-block: 14px 8px; border-top: 1px solid var(--rule); font-size: 12.5px; color: var(--ink-soft); }
+footer p { margin: 0 0 6px; max-width: 64ch; }
+
+@media (min-width: 660px) { .games { grid-template-columns: 1fr 1fr; } }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <a class="back" href="./">&larr; Standings</a>
+    <div class="eyebrow" id="eyebrow">Pick 15</div>
+    <h1>Make your picks</h1>
+    <p class="lead" id="lead">Loading this week&rsquo;s games&hellip;</p>
+    <div class="banner" id="banner" hidden></div>
+  </header>
+  <div id="done" hidden></div>
+  <section aria-labelledby="who-h">
+    <h2 id="who-h">Who&rsquo;s picking?</h2>
+    <div class="names" id="names"></div>
+    <p class="note" id="names-note" hidden></p>
+  </section>
+  <section aria-labelledby="games-h">
+    <h2 id="games-h">Games</h2>
+    <div id="games"></div>
+  </section>
+  <footer>
+    <p>Pick 15: any mix of sides and totals, at most one side and one total per game. A pick wins if that team covers the spread, or the combined score goes over or under the total.</p>
+    <p>Lines are DraftKings&rsquo; numbers, locked Wednesday evening. Team logos come from ESPN.</p>
+  </footer>
+</div>
+<div class="bar">
+  <div class="wrap bar-in">
+    <div class="count"><span><b id="count">0</b> of 15 picked</span><div class="meter" id="meter" aria-hidden="true"></div></div>
+    <button class="submit" id="submit" type="button" disabled>Submit picks</button>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+  var TZ = 'America/Chicago', NEED = 15;
+  var ESPN = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
+  var TICK = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 5.3 4.1 7.4 8 3"/></svg>';
+  var $ = function (id) { return document.getElementById(id); };
+  var S = {
+    mode: 'loading', why: null, api: null, season: 2026, week: null, games: [], players: [],
+    submitted: {}, name: null, sel: {}, offset: 0, opensAt: null, lockedAt: null, saving: false, done: null
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function load(k) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function selKey(name) { return 'pickem.sel.w' + S.week + '.' + (name || '_'); }
+  function now() { return Date.now() + S.offset; }
+  function fmt(d, o) {
+    try { return new Intl.DateTimeFormat('en-US', Object.assign({ timeZone: TZ }, o)).format(new Date(d)); }
+    catch (e) { return new Date(d).toLocaleString(); }
+  }
+  function when(iso) { return fmt(iso, { weekday: 'short', hour: 'numeric', minute: '2-digit' }); }
+  function dayOf(iso) { return fmt(iso, { weekday: 'long', month: 'short', day: 'numeric' }); }
+  function fmtLine(n) {
+    if (n == null || isNaN(n)) return '–';
+    if (Number(n) === 0) return 'PK';
+    return (n > 0 ? '+' : '−') + Math.abs(n);
+  }
+  function getJSON(url) {
+    return fetch(url, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+  }
+  function isLocked(g) { return now() >= Date.parse(g.kickoff); }
+  function hasSide(g) { return g.homeLine != null && g.awayLine != null && !isNaN(g.homeLine); }
+  function hasTotal(g) { return g.total != null && !isNaN(g.total); }
+  function count() {
+    var c = 0;
+    Object.keys(S.sel).forEach(function (n) { if (S.sel[n].side) c++; if (S.sel[n].total) c++; });
+    return c;
+  }
+  function gameByN(n) { for (var i = 0; i < S.games.length; i++) if (S.games[i].n === n) return S.games[i]; return null; }
+  function toast(msg) {
+    var t = $('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(function () { t.classList.remove('show'); }, 3200);
+  }
+
+  /* ---------- ESPN preview slate ---------- */
+  function teamOf(c) {
+    var t = (c && c.team) || {};
+    return { abbr: t.abbreviation || '', name: t.shortDisplayName || t.name || t.abbreviation || '', logo: t.logo || '' };
+  }
+  function parseOdds(comp, home, away) {
+    var o = (comp.odds || [])[0] || {};
+    var out = { homeLine: null, awayLine: null, total: typeof o.overUnder === 'number' ? o.overUnder : null };
+    var d = String(o.details || '').trim();
+    if (/^(even|pk|pick)$/i.test(d)) { out.homeLine = 0; out.awayLine = 0; return out; }
+    var m = d.match(/^([A-Z]{2,4})\s+([+-]?\d+(?:\.\d+)?)$/);
+    if (m) {
+      var x = Math.abs(parseFloat(m[2]));
+      if (m[1] === home) { out.homeLine = -x; out.awayLine = x; }
+      else if (m[1] === away) { out.awayLine = -x; out.homeLine = x; }
+    }
+    return out;
+  }
+  function slateFromEspn(sb) {
+    var evs = ((sb && sb.events) || []).slice().sort(function (a, b) { return Date.parse(a.date) - Date.parse(b.date); });
+    return evs.map(function (ev, i) {
+      var comp = ev.competitions[0], side = {};
+      comp.competitors.forEach(function (c) { side[c.homeAway] = c; });
+      var home = teamOf(side.home), away = teamOf(side.away), o = parseOdds(comp, home.abbr, away.abbr);
+      return { n: i + 1, id: ev.id, kickoff: ev.date, home: home, away: away, homeLine: o.homeLine, awayLine: o.awayLine, total: o.total };
+    });
+  }
+  function espnWeek(week) {
+    return getJSON(ESPN + (week ? '?seasontype=2&week=' + week + '&dates=' + S.season : ''));
+  }
+  function previewSlate(week) {
+    if (week) return espnWeek(week).then(function (sb) { return { week: week, games: slateFromEspn(sb) }; });
+    return espnWeek(null).then(function (sb) {
+      if (!sb) throw new Error('espn');
+      var wk = sb.week && sb.week.number, games = slateFromEspn(sb);
+      if (wk && games.length && Date.parse(games[0].kickoff) <= Date.now()) {
+        return espnWeek(wk + 1).then(function (nb) {
+          var next = slateFromEspn(nb);
+          return next.length ? { week: wk + 1, games: next } : { week: wk, games: games };
+        });
+      }
+      return { week: wk, games: games };
+    });
+  }
+
+  /* ---------- loading ---------- */
+  function init() {
+    getJSON('data.json?t=' + Date.now()).then(function (d) {
+      var cfg = (d && d.config) || {};
+      S.api = cfg.picksApi || null;
+      S.season = (d && d.season) || 2026;
+      S.players = Object.keys(cfg.players || {}).map(function (k) { return cfg.players[k].name; });
+      if (!S.api) return startPreview(null, 'setup');
+      return getJSON(S.api + '?action=slate').then(function (s) {
+        if (!s || !s.ok) return startPreview(null, 'offline');
+        if (s.serverNow) S.offset = Date.parse(s.serverNow) - Date.now();
+        if (s.players && s.players.length) S.players = s.players;
+        S.submitted = {};
+        (s.submitted || []).forEach(function (x) { S.submitted[x.name] = x.at; });
+        if (s.status === 'open') {
+          S.mode = 'open'; S.week = s.week; S.games = s.games || []; S.lockedAt = s.lockedAt || null;
+          restore(); render(); return;
+        }
+        S.opensAt = s.opensAt || null;
+        return startPreview(s.week || null, s.status === 'closed' ? 'closed' : 'upcoming');
+      });
+    }).catch(function () { startPreview(null, 'offline'); });
+  }
+  function startPreview(week, why) {
+    S.mode = 'preview'; S.why = why;
+    return previewSlate(week).then(function (r) {
+      S.week = r.week; S.games = r.games; restore(); render();
+    }).catch(function () { S.mode = 'error'; render(); });
+  }
+  function restore() {
+    var last = load('pickem.name');
+    if (last && S.players.indexOf(last) >= 0) S.name = last;
+    S.sel = load(selKey(S.name)) || load(selKey(null)) || {};
+    // drop picks for games that aren't on this slate
+    Object.keys(S.sel).forEach(function (n) { if (!gameByN(+n)) delete S.sel[n]; });
+  }
+
+  /* ---------- rendering ---------- */
+  function render() {
+    $('eyebrow').textContent = S.week ? 'Week ' + S.week + ' · pick ' + NEED : 'Pick ' + NEED;
+    var lead = 'Pick ' + NEED + ': any mix of sides and totals. Each game locks at kickoff.';
+    var banner = '';
+    if (S.mode === 'open') {
+      lead = 'Pick ' + NEED + ': any mix of sides and totals. You can change a pick until that game kicks off.';
+      if (S.lockedAt) banner = 'Lines are DraftKings’ numbers as of ' + esc(when(S.lockedAt)) + ' CT.';
+    } else if (S.mode === 'preview') {
+      if (S.why === 'upcoming' && S.opensAt) {
+        banner = '<b>Picks open ' + esc(fmt(S.opensAt, { weekday: 'long', hour: 'numeric', minute: '2-digit' })) +
+          ' CT</b>, when the lines lock. These are DraftKings’ current numbers, and they can still move. You can start picking now; it saves on this phone.';
+      } else if (S.why === 'closed') {
+        banner = '<b>This week’s picks are closed.</b> Next week’s games show up here once the lines lock.';
+      } else if (S.why === 'offline') {
+        banner = '<b>The pick sheet didn’t answer.</b> These are DraftKings’ current lines. Reload in a minute to submit.';
+      } else {
+        banner = '<b>Preview.</b> These are DraftKings’ current lines. Submitting turns on once the pick sheet is connected.';
+      }
+    } else if (S.mode === 'error') {
+      lead = 'This week’s games didn’t load. Check your connection and reload the page.';
+    }
+    $('lead').textContent = lead;
+    $('banner').innerHTML = banner;
+    $('banner').hidden = !banner;
+    renderNames();
+    renderGames();
+    renderBar();
+    renderDone();
+  }
+
+  function renderNames() {
+    var h = '';
+    S.players.forEach(function (p) {
+      var on = p === S.name, inn = S.submitted[p];
+      h += '<button class="name" type="button" data-name="' + esc(p) + '" aria-pressed="' + on + '"' +
+        (inn ? ' aria-label="' + esc(p) + ', picks in"' : '') + '>' +
+        (inn ? '<span class="in" aria-hidden="true"></span>' : '') + esc(p) + '</button>';
+    });
+    $('names').innerHTML = h || '<span class="note">No player list yet.</span>';
+    var note = '';
+    var inNames = S.players.filter(function (p) { return S.submitted[p]; });
+    if (S.mode === 'open') {
+      note = inNames.length ? inNames.length + ' of ' + S.players.length + ' have picks in (green dot).' : 'Nobody has picks in yet.';
+      if (S.name && S.submitted[S.name]) note += ' Your picks went in ' + when(S.submitted[S.name]) + ' CT.';
+    }
+    $('names-note').textContent = note;
+    $('names-note').hidden = !note;
+  }
+
+  function optAttrs(g, kind, val, enabled) {
+    var s = S.sel[g.n] || {}, on = s[kind] === val;
+    return { on: on, attrs: ' data-n="' + g.n + '" data-k="' + kind + '" data-v="' + val + '" aria-pressed="' + on + '"' + (enabled ? '' : ' disabled') };
+  }
+  function teamBtn(g, role, enabled) {
+    var t = g[role], line = role === 'home' ? g.homeLine : g.awayLine, a = optAttrs(g, 'side', role, enabled && hasSide(g));
+    var label = t.name + ' ' + fmtLine(line) + (role === 'home' ? ' at home' : ' on the road');
+    return '<button class="opt team' + (a.on ? ' on' : '') + '" type="button"' + a.attrs + ' aria-label="' + esc(label) + '">' +
+      '<span class="logo" data-abbr="' + esc(t.abbr) + '">' +
+      (t.logo ? '<img src="' + esc(t.logo) + '" alt="" loading="lazy" width="32" height="32" onerror="this.parentNode.textContent=this.parentNode.getAttribute(\'data-abbr\')">' : esc(t.abbr)) +
+      '</span><span class="tm"><span class="tm-name">' + esc(t.name) + '</span><span class="tm-line">' + esc(fmtLine(line)) + '</span></span>' +
+      '<span class="tick">' + TICK + '</span></button>';
+  }
+  function totBtn(g, val, enabled) {
+    var a = optAttrs(g, 'total', val, enabled && hasTotal(g));
+    var word = val === 'over' ? 'Over' : 'Under';
+    return '<button class="opt tot' + (a.on ? ' on' : '') + '" type="button"' + a.attrs + '>' + word +
+      '<b>' + (hasTotal(g) ? esc(g.total) : '–') + '</b><span class="tick">' + TICK + '</span></button>';
+  }
+  function card(g) {
+    var locked = isLocked(g), noline = !hasSide(g) && !hasTotal(g), enabled = !locked && S.mode !== 'error';
+    var status = locked ? 'Kicked off' : noline ? 'Line coming' : 'G' + g.n;
+    return '<article class="gc' + (locked ? ' locked' : '') + (noline ? ' noline' : '') + '" aria-label="' + esc(g.away.name + ' at ' + g.home.name) + '">' +
+      '<div class="gc-meta"><span>' + esc(when(g.kickoff)) + '</span><span>' + esc(status) + '</span></div>' +
+      '<div class="gc-sides">' + teamBtn(g, 'away', enabled) + '<span class="at" aria-hidden="true">at</span>' + teamBtn(g, 'home', enabled) + '</div>' +
+      '<div class="gc-totals">' + totBtn(g, 'over', enabled) + totBtn(g, 'under', enabled) + '</div></article>';
+  }
+  function renderGames() {
+    if (S.mode === 'error') { $('games').innerHTML = '<div class="empty">No games to show right now.</div>'; return; }
+    if (!S.games.length) { $('games').innerHTML = '<div class="empty">' + (S.mode === 'loading' ? 'Loading&hellip;' : 'No games posted for this week yet.') + '</div>'; return; }
+    var h = '', day = null, open = false;
+    S.games.slice().sort(function (a, b) { return Date.parse(a.kickoff) - Date.parse(b.kickoff) || a.n - b.n; }).forEach(function (g) {
+      var d = dayOf(g.kickoff);
+      if (d !== day) {
+        if (open) h += '</div>';
+        h += '<h3 class="day">' + esc(d) + '</h3><div class="games">';
+        day = d; open = true;
+      }
+      h += card(g);
+    });
+    if (open) h += '</div>';
+    $('games').innerHTML = h;
+  }
+
+  function renderBar() {
+    var c = count(), m = '';
+    for (var i = 0; i < NEED; i++) m += '<i class="' + (i < c ? 'f' : '') + '"></i>';
+    $('count').textContent = c;
+    $('meter').innerHTML = m;
+    var b = $('submit'), label = 'Submit picks', ok = false;
+    if (S.mode === 'open') {
+      ok = !!S.name && c === NEED && !S.saving;
+      if (S.saving) label = 'Saving…';
+      else if (S.name && S.submitted[S.name]) label = 'Update picks';
+    } else if (S.mode === 'preview') {
+      label = S.why === 'upcoming' && S.opensAt ? 'Opens ' + fmt(S.opensAt, { weekday: 'short', hour: 'numeric' }) : 'Preview only';
+    } else {
+      label = 'Not available';
+    }
+    b.textContent = label;
+    b.disabled = !ok;
+  }
+
+  function pickText(g, kind, val) {
+    if (kind === 'side') return g[val].name + ' ' + fmtLine(val === 'home' ? g.homeLine : g.awayLine);
+    return (val === 'over' ? 'Over ' : 'Under ') + g.total + ' (' + g.away.abbr + '–' + g.home.abbr + ')';
+  }
+  function renderDone() {
+    var el = $('done');
+    if (!S.done) { el.hidden = true; return; }
+    var items = (S.done.picks || []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
+    el.innerHTML = '<div class="done"><h2>You’re in, ' + esc(S.done.name) + '</h2>' +
+      '<p>' + NEED + ' picks saved ' + esc(when(S.done.at)) + ' CT. You can change a pick until that game kicks off.</p>' +
+      '<ul>' + items + '</ul></div>';
+    el.hidden = false;
+  }
+
+  /* ---------- actions ---------- */
+  function choose(name) {
+    var had = S.name;
+    S.name = name; save('pickem.name', name); S.done = null;
+    var mine = load(selKey(name));
+    if (mine) S.sel = mine;
+    else if (had) S.sel = {};
+    Object.keys(S.sel).forEach(function (n) { if (!gameByN(+n)) delete S.sel[n]; });
+    render();
+  }
+  function toggle(n, kind, val) {
+    var g = gameByN(n);
+    if (!g || isLocked(g)) return;
+    var s = S.sel[n] || (S.sel[n] = { side: null, total: null });
+    if (s[kind] === val) s[kind] = null;
+    else if (s[kind]) s[kind] = val;
+    else if (count() >= NEED) { toast('That’s ' + NEED + ' picks. Tap one you’ve picked to drop it first.'); return; }
+    else s[kind] = val;
+    if (!s.side && !s.total) delete S.sel[n];
+    save(selKey(S.name), S.sel);
+    S.done = null;
+    renderGames(); renderBar(); renderDone();
+  }
+  function submit() {
+    if (S.mode !== 'open' || S.saving) return;
+    if (!S.name) { toast('Tap your name first.'); $('who-h').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+    var picks = [];
+    Object.keys(S.sel).forEach(function (n) {
+      var s = S.sel[n];
+      if (s.side) picks.push({ n: +n, pick: s.side });
+      if (s.total) picks.push({ n: +n, pick: s.total });
+    });
+    if (picks.length !== NEED) { toast('Pick ' + NEED + ' to submit. You have ' + picks.length + '.'); return; }
+    S.saving = true; renderBar();
+    fetch(S.api, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'submit', week: S.week, name: S.name, picks: picks })
+    }).then(function (r) { return r.json(); }).then(function (res) {
+      if (!res || !res.ok) throw new Error((res && res.error) || 'Your picks didn’t save. Try again.');
+      S.submitted[S.name] = res.at;
+      save(selKey(S.name), S.sel);
+      S.done = { name: S.name, at: res.at, picks: res.picks || picks.map(function (p) {
+        var g = gameByN(p.n); return pickText(g, p.pick === 'over' || p.pick === 'under' ? 'total' : 'side', p.pick);
+      }) };
+      renderNames(); renderDone();
+      $('done').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toast('Picks saved.');
+    }).catch(function (err) {
+      var msg = err && err.message;
+      toast(!msg || /fetch|network|json/i.test(msg) ? 'Your picks didn’t save. Check your connection and try again.' : msg);
+    }).then(function () { S.saving = false; renderBar(); });
+  }
+
+  document.addEventListener('click', function (ev) {
+    var t = ev.target.closest('[data-name],[data-k],#submit');
+    if (!t) return;
+    if (t.id === 'submit') { submit(); return; }
+    if (t.hasAttribute('data-name')) { choose(t.getAttribute('data-name')); return; }
+    if (t.disabled) return;
+    toggle(+t.getAttribute('data-n'), t.getAttribute('data-k'), t.getAttribute('data-v'));
+  });
+  // re-check kickoff locks every 30 seconds
+  setInterval(function () { if (S.games.length) { renderGames(); renderBar(); } }, 30000);
+  render();
+  init();
+})();
+</script>
+</body>
+</html>

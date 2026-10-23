@@ -105,6 +105,13 @@ h1 {
 }
 @keyframes pulse { 50% { opacity: .25; } }
 
+.cta {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+  padding: 10px 16px; border-radius: 999px; background: var(--ink); color: var(--paper);
+  font-weight: 750; font-size: 14.5px; text-decoration: none;
+}
+.cta:focus-visible { outline: 2px solid var(--pen); outline-offset: 3px; }
+
 /* Week tabs */
 .tabs {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
@@ -331,6 +338,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
     <h1>NFL Pick'em</h1>
     <p class="story" id="story">Loading the standings&hellip;</p>
     <div class="meta" id="meta"></div>
+    <a class="cta" href="picks.html">Make your picks &rarr;</a>
   </header>
 </div>
 <nav class="tabs" aria-label="Weeks">
