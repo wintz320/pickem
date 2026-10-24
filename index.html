@@ -167,7 +167,7 @@ h2 {
 .game-name { font-weight: 700; font-size: 15.5px; }
 .game-when { font-size: 12.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .game-when.is-live { color: var(--live); font-weight: 700; }
-.game-news { margin: 4px 0 0; font-size: 13px; line-height: 1.4; max-width: 62ch; }
+.game-news { margin: 10px 0 0; padding-top: 8px; border-top: 1px dashed var(--rule); font-size: 13px; line-height: 1.4; }
 .news-tag {
   display: inline-block; margin-right: 6px; font-size: 10.5px; font-weight: 750;
   letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft);
@@ -936,7 +936,6 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
         (L ? '<span class="game-when is-live">Live \u00b7 ' + esc([L.period, L.clock].filter(Boolean).join(' ')) + '</span>'
            : '<span class="game-when">' + esc(whenText(g)) + '</span>') + '</div>';
       if (L) html += '<div class="scoreline">' + esc(scoreText(g, L)) + '</div>';
-      html += newsLine(g);
       if (gl.length) {
         html += '<ul class="splits">';
         gl.forEach(function (grp) {
@@ -950,6 +949,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
       } else {
         html += '<div class="note">Nobody picked this one.</div>';
       }
+      html += newsLine(g);
       html += '</li>';
     });
     html += '</ul>';
