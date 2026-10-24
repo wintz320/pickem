@@ -1,4 +1,72 @@
 {
- "weeks": {},
- "updatedAt": null
+ "weeks": {
+  "7": {
+   "PIT@NO": {
+    "text": "Steelers S DeShon Elliott is back from injured reserve for Sunday's game.",
+    "source": "https://www.si.com/nfl/steelers/onsi/pittsburgh-steelers-starting-safety-deshon-elliott-back-injured-reserve",
+    "published": "2026-10-24"
+   },
+   "CIN@BAL": {
+    "text": "Ravens QB Lamar Jackson is questionable with a high ankle sprain; Tyler Huntley starts if he sits.",
+    "source": "https://www.nbcsports.com/nfl/profootballtalk/rumor-mill/news/lamar-jackson-officially-questionable-for-ravens-bengals",
+    "published": "2026-10-23"
+   },
+   "CLE@TEN": {
+    "text": "Browns RB Quinshon Judkins is expected back from an ankle injury after missing Week 6.",
+    "source": "https://www.prizepicks.com/playbook-article/quinshon-judkins-injury-update-is-browns-rb-playing-in-week-7-vs-titans",
+    "published": "2026-10-23"
+   },
+   "IND@MIN": {
+    "text": "Colts CB Sauce Gardner (calf) and TE Tyler Warren (groin) are out against the Vikings.",
+    "source": "https://www.cbssports.com/nfl/news/nfl-week-7-injury-report-baker-mayfield-lamar-jackson-questionable/",
+    "published": "2026-10-23"
+   },
+   "MIA@NYJ": {
+    "text": "Jets RB Breece Hall is questionable with a quad injury after missing three games.",
+    "source": "https://www.espn.com/nfl/story/_/id/50258482/jets-wr-mitchell-play-rb-hall-questionable-vs-dolphins",
+    "published": "2026-10-23"
+   },
+   "NYG@HOU": {
+    "text": "J.J. McCarthy starts at quarterback for the Giants, replacing Jameis Winston.",
+    "source": "https://www.giants.com/news/j-j-mccarthy-to-start-quarterback-new-york-giants-week-7-houston-texans-john-harbaugh-jameis-winston",
+    "published": "2026-10-22"
+   },
+   "SF@ATL": {
+    "text": "49ers WR Mike Evans (Achilles) and DE Nick Bosa (calf) are both out against Atlanta.",
+    "source": "https://www.nbcsportsbayarea.com/nfl/san-francisco-49ers/mike-evans-nick-bosa-out-injury-report/1973551/",
+    "published": "2026-10-23"
+   },
+   "TB@CAR": {
+    "text": "Bucs QB Baker Mayfield is expected to start after missing three games with a dislocated thumb.",
+    "source": "https://www.southernsportstoday.com/2026/10/23/bucs-qb-baker-mayfield-thumb-to-start-vs-panthers/",
+    "published": "2026-10-23"
+   },
+   "DEN@ARI": {
+    "text": "Broncos CB Pat Surtain II is questionable after missing two games with an ankle injury.",
+    "source": "https://www.denvergazette.com/2026/10/23/broncos-cb-pat-surtain-listed-as-questionable-to-face-cardinals/",
+    "published": "2026-10-23"
+   },
+   "GB@DET": {
+    "text": "Josh Jacobs is back for the Packers after missing six games on the commissioner's exempt list.",
+    "source": "https://abcnews.com/Sports/wireStory/nfl-remove-packers-josh-jacobs-commissioners-exempt-list-137333458",
+    "published": "2026-10-24"
+   },
+   "LA@LV": {
+    "text": "Rams WR Puka Nacua is questionable for Sunday with a calf injury.",
+    "source": "https://www.thesportingtribune.com/2026/10/24/rams-puka-nacua-queationable-against-raiders-sunday",
+    "published": "2026-10-24"
+   },
+   "KC@SEA": {
+    "text": "Chiefs WR Rashee Rice is out for a second straight week with hamstring and knee injuries.",
+    "source": "https://www.cbssports.com/nfl/news/nfl-week-7-injury-report-baker-mayfield-lamar-jackson-questionable/",
+    "published": "2026-10-23"
+   },
+   "DAL@PHI": {
+    "text": "Eagles QB Jalen Hurts is on injured reserve with a blood clot, so Tanner McKee starts.",
+    "source": "https://abcnews.com/Sports/wireStory/eagles-qb-jalen-hurts-injured-reserve-blood-clot-137352927",
+    "published": "2026-10-17"
+   }
+  }
+ },
+ "updatedAt": "2026-10-24T17:19:17+00:00"
 }
