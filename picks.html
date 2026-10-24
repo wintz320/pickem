@@ -290,7 +290,8 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     return espnWeek(null).then(function (sb) {
       if (!sb) throw new Error('espn');
       var wk = sb.week && sb.week.number, games = slateFromEspn(sb);
-      if (wk && games.length && Date.parse(games[0].kickoff) <= Date.now()) {
+      // Stay on this week while any of its games is still to come; after the last kickoff, show next week.
+      if (wk && games.length && games.every(isLocked)) {
         return espnWeek(wk + 1).then(function (nb) {
           var next = slateFromEspn(nb);
           return next.length ? { week: wk + 1, games: next } : { week: wk, games: games };
