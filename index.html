@@ -167,6 +167,18 @@ h2 {
 .game-name { font-weight: 700; font-size: 15.5px; }
 .game-when { font-size: 12.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .game-when.is-live { color: var(--live); font-weight: 700; }
+.game-news { margin: 4px 0 0; font-size: 13px; line-height: 1.4; max-width: 62ch; }
+.news-tag {
+  display: inline-block; margin-right: 6px; font-size: 10.5px; font-weight: 750;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft);
+}
+.notes-h { margin: 14px 0 2px; font-size: 11.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.notes { list-style: none; margin: 0 0 10px; padding: 0; }
+.notes li { padding: 9px 0; border-top: 1px solid var(--rule); }
+.notes li:first-child { border-top: 0; }
+.nt-g { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-weight: 700; font-size: 14px; }
+.nt-g span { font-weight: 500; font-size: 12.5px; color: var(--ink-soft); white-space: nowrap; }
+.notes p { margin: 2px 0 0; font-size: 13.5px; line-height: 1.4; }
 .scoreline {
   font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.1;
   font-variant-numeric: tabular-nums; margin-top: 2px;
@@ -718,7 +730,35 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
   'use strict';
   var E = window.PickEngine, T = E.TEAMS;
   var $ = function (id) { return document.getElementById(id); };
-  var model = null, data = null, scoresCheckedAt = null;
+  var model = null, data = null, scoresCheckedAt = null, news = null;
+  function loadNews() {
+    return fetch('news.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (n) {
+        if (!n || !n.weeks) return false;
+        var changed = JSON.stringify(n) !== JSON.stringify(news);
+        news = n;
+        return changed;
+      }).catch(function () { return false; });
+  }
+  function newsFor(g) {
+    var wk = g && news && news.weeks && news.weeks[String(g.week)];
+    var item = wk && wk[g.away + '@' + g.home];
+    return item && item.text ? item : null;
+  }
+  function newsLine(g) {
+    var n = newsFor(g);
+    return n ? '<p class="game-news"><span class="news-tag">News</span>' + esc(n.text) + '</p>' : '';
+  }
+  function gameNotes(w) {
+    if (!news) return '';
+    var gs = (data.games || []).filter(function (g) { return g.week === w.week && g.awayScore == null && newsFor(g); })
+      .sort(function (a, b) { return kickoffAt(a) - kickoffAt(b); });
+    if (!gs.length) return '';
+    return '<h3 class="notes-h">Game news</h3><ul class="notes">' + gs.map(function (g) {
+      return '<li><div class="nt-g">' + esc(matchup(g)) + '<span>' + esc(kickoff(g)) + '</span></div><p>' + esc(newsFor(g).text) + '</p></li>';
+    }).join('') + '</ul>';
+  }
   var ui = { view: 'season', open: {} };
   var TZ = 'America/Chicago';
 
@@ -896,6 +936,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
         (L ? '<span class="game-when is-live">Live \u00b7 ' + esc([L.period, L.clock].filter(Boolean).join(' ')) + '</span>'
            : '<span class="game-when">' + esc(whenText(g)) + '</span>') + '</div>';
       if (L) html += '<div class="scoreline">' + esc(scoreText(g, L)) + '</div>';
+      html += newsLine(g);
       if (gl.length) {
         html += '<ul class="splits">';
         gl.forEach(function (grp) {
@@ -941,7 +982,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
         '<div class="now-head"><h2 id="now-h">Week ' + w.week + '</h2><span class="chip">Picks coming in</span></div>' +
         '<p class="now-lead">' + esc(plural(w.entries.length, 'entry', 'entries') + ' in so far: ' +
           listNames(w.entries.map(function (e) { return model.players[e.pid]; }))) + '.</p>' +
-        '<p class="note" style="margin:0 0 12px">' + esc(lockNote(w)) + '</p></section>';
+        '<p class="note" style="margin:0 0 12px">' + esc(lockNote(w)) + '</p>' + gameNotes(w) + '</section>';
     } else if (w) {
       h += '<section class="sheet now" aria-labelledby="now-h">' +
         '<div class="now-head"><h2 id="now-h">Week ' + w.week + '</h2>' +
@@ -1020,7 +1061,9 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
       var lh = '<section><div class="h2-row"><h2>Week ' + w.week + '</h2><span class="chip">Picks coming in</span></div>' +
         '<div class="week-meta"><span>' + esc(dateRange(w.firstDate, w.lastDate)) + '</span><span>' +
         plural(w.entries.length, 'entry', 'entries') + ' in</span></div>' +
-        '<p class="now-lead">' + esc(lockNote(w)) + '</p></section><section><ol class="sheet board">';
+        '<p class="now-lead">' + esc(lockNote(w)) + '</p></section>' +
+        (gameNotes(w) ? '<section class="sheet now">' + gameNotes(w) + '</section>' : '') +
+        '<section><ol class="sheet board">';
       w.entries.slice().sort(function (a, b) { return a.ts - b.ts; }).forEach(function (e) {
         lh += '<li><div class="entry-btn board-head" style="text-transform:none;letter-spacing:0;font-size:14px">' +
           '<span class="rank"></span><span class="who"><span class="nm" style="color:var(--ink)">' + esc(model.players[e.pid].name) +
@@ -1209,6 +1252,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
       var h = (location.hash || '').replace('#', '');
       if (/^w\d+$/.test(h) && model.weeks.some(function (w) { return 'w' + w.week === h; })) ui.view = h;
       render();
+      loadNews().then(function (changed) { if (changed) render(); });
     }).catch(function () {
       $('story').textContent = 'The standings didn\u2019t load. Reopen the page to try again.';
       $('view').innerHTML = '';
@@ -1254,14 +1298,14 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
     });
     return d;
   }
-  function apply() {
+  function apply(force) {
     if (!base) return;
     var fresh = combine(base, board);
     var before = JSON.stringify([data && data.live, data && data.games, data && data.tabs, data && data.updatedAt]);
     var after = JSON.stringify([fresh.live, fresh.games, fresh.tabs, fresh.updatedAt]);
     data = fresh;
     model = E.build(fresh);
-    if (before === after && ticks > 1) { renderMeta(); return; }
+    if (before === after && ticks > 1 && !force) { renderMeta(); return; }
     var y = window.scrollY;
     render();
     try { window.scrollTo({ top: y }); } catch (e) {}
@@ -1277,11 +1321,12 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
     var wantBoard = wk && (!quiet || ticks % 10 === 1);
     Promise.all([
       getJSON('data.json?t=' + Date.now()),
-      wantBoard ? getJSON(espnUrl(wk)) : Promise.resolve(null)
+      wantBoard ? getJSON(espnUrl(wk)) : Promise.resolve(null),
+      ticks % 10 === 1 ? loadNews() : Promise.resolve(false)
     ]).then(function (res) {
       if (res[0]) base = res[0];
       if (res[1] && res[1].events) { board = res[1]; scoresCheckedAt = new Date().toISOString(); }
-      apply();
+      apply(res[2]);
     });
   }
   (function whenReady(n) {

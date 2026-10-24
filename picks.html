@@ -92,6 +92,8 @@ h2 {
 .games { display: grid; gap: 10px; }
 .gc { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 10px; display: grid; gap: 8px; min-width: 0; }
 .gc-meta { display: flex; justify-content: space-between; gap: 8px; padding: 0 2px; font-size: 12px; font-weight: 650; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.gc-news { margin: 0 2px; font-size: 13px; line-height: 1.4; }
+.gc-news b { margin-right: 6px; font-size: 10.5px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
 .gc-sides { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 6px; align-items: stretch; }
 .at { align-self: center; font-size: 11.5px; font-weight: 700; color: var(--ink-soft); }
 .gc-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -205,8 +207,14 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   var $ = function (id) { return document.getElementById(id); };
   var S = {
     mode: 'loading', why: null, api: null, season: 2026, week: null, games: [], players: [],
-    submitted: {}, name: null, sel: {}, offset: 0, opensAt: null, lockedAt: null, saving: false, done: null
+    submitted: {}, name: null, sel: {}, offset: 0, opensAt: null, lockedAt: null, saving: false, done: null, news: null
   };
+  var CODE = { LAR: 'LA', WSH: 'WAS', JAC: 'JAX' };   // ESPN codes -> the leaderboard's
+  function newsFor(g) {
+    var wk = S.news && S.news.weeks && S.news.weeks[String(S.week)];
+    var item = wk && wk[(CODE[g.away.abbr] || g.away.abbr) + '@' + (CODE[g.home.abbr] || g.home.abbr)];
+    return item && item.text ? item.text : null;
+  }
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
@@ -403,6 +411,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     var status = locked ? 'Kicked off' : noline ? 'Line coming' : 'G' + g.n;
     return '<article class="gc' + (locked ? ' locked' : '') + (noline ? ' noline' : '') + '" aria-label="' + esc(g.away.name + ' at ' + g.home.name) + '">' +
       '<div class="gc-meta"><span>' + esc(when(g.kickoff)) + '</span><span>' + esc(status) + '</span></div>' +
+      (newsFor(g) ? '<p class="gc-news"><b>News</b>' + esc(newsFor(g)) + '</p>' : '') +
       '<div class="gc-sides">' + teamBtn(g, 'away', enabled) + '<span class="at" aria-hidden="true">at</span>' + teamBtn(g, 'home', enabled) + '</div>' +
       '<div class="gc-totals">' + totBtn(g, 'over', enabled) + totBtn(g, 'under', enabled) + '</div></article>';
   }
@@ -522,6 +531,9 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   setInterval(function () { if (S.games.length) { renderGames(); renderBar(); } }, 30000);
   render();
   init();
+  getJSON('news.json?t=' + Date.now()).then(function (n) {
+    if (n && n.weeks) { S.news = n; if (S.games.length) renderGames(); }
+  });
 })();
 </script>
 </body>
