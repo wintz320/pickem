@@ -11,6 +11,8 @@
  *
  * Setup: paste this file, run setup() once, then Deploy > New deployment > Web app
  * (Execute as: Me, Who has access: Anyone) and send the web app URL to the site.
+ * It can also live in its own project at script.google.com, owned by anyone who can edit
+ * the pick sheet; it then finds the sheet by PICK_SHEET_ID.
  */
 
 var TZ = 'America/Chicago';
@@ -19,6 +21,7 @@ var NEED = 15;              // picks per week
 var LOCK_WEEKDAY = 3;       // lines lock on Wednesday (Sunday = 0)
 var LOCK_HOUR = 18;         // at 6 PM Central
 var ESPN = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
+var PICK_SHEET_ID = '1F2tJ4O-HmvlKSc843VxsGM5fStvkSCOr_Lh4K7N1NpE';   // used when the script isn't inside the sheet
 var PLAYERS_TAB = 'Players';
 var DEFAULT_PLAYERS = ['Losing Hair Do Care', 'Fin Diesel', 'Pump up the Gam', 'Hollywood', "Long Hair Don't Care",
   'Boss Baby', 'Big Cheese', 'Glamorace', 'Super Max', 'Jet', 'Koala Bears'];
@@ -34,7 +37,7 @@ function picksTab_(week) { return 'Picks Wk ' + week; }
 
 /** Run once from the editor. Makes the Players tab (if missing) and the hourly check. */
 function setup() {
-  var ss = SpreadsheetApp.getActive();
+  var ss = SpreadsheetApp.getActive() || SpreadsheetApp.openById(PICK_SHEET_ID);
   PropertiesService.getScriptProperties().setProperty('SHEET_ID', ss.getId());
   if (!ss.getSheetByName(PLAYERS_TAB)) {
     var sh = ss.insertSheet(PLAYERS_TAB);
@@ -358,7 +361,7 @@ function newPicksTab_(ss, week) {
 
 function book_() {
   var id = PropertiesService.getScriptProperties().getProperty('SHEET_ID');
-  return id ? SpreadsheetApp.openById(id) : SpreadsheetApp.getActive();
+  return id ? SpreadsheetApp.openById(id) : (SpreadsheetApp.getActive() || SpreadsheetApp.openById(PICK_SHEET_ID));
 }
 function num_(x) {
   if (x === '' || x == null) return null;
