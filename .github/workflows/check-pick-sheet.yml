@@ -1,6 +1,7 @@
 name: Check pick sheet
 
 # Run by hand to check that the pick sheet's web app answers: Actions > Check pick sheet > Run workflow.
+# Results show as notes on the run's summary page.
 on:
   workflow_dispatch:
     inputs:
@@ -16,27 +17,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Find the URL
-        id: url
+      - name: Call the web app
         env:
           INPUT_URL: ${{ inputs.url }}
         run: |
           u="$INPUT_URL"
           [ -n "$u" ] || u=$(python3 -c "import json; print(json.load(open('config.json')).get('picksApi', ''))")
-          [ -n "$u" ] || { echo "No URL given and picksApi is empty"; exit 1; }
-          echo "url=$u" >> "$GITHUB_OUTPUT"
-      - name: Slate
-        run: curl -sSL --max-time 60 "${{ steps.url.outputs.url }}?action=slate" | python3 -m json.tool | head -c 4000
-      - name: Self-test
-        run: curl -sSL --max-time 60 "${{ steps.url.outputs.url }}?action=selftest" | python3 -m json.tool
-      - name: Dry-run submit (nothing is saved)
-        run: |
-          python3 - > body.json <<'PY'
+          [ -n "$u" ] || { echo "::error::No URL given and picksApi is empty"; exit 1; }
+          curl -sSL --max-time 60 "$u?action=slate" -o slate.json || true
+          curl -sSL --max-time 60 "$u?action=selftest" -o selftest.json || true
+          python3 -c "
           import json
-          picks = [{"n": n, "pick": "home"} for n in range(1, 9)] + [{"n": n, "pick": "over"} for n in range(1, 8)]
-          print(json.dumps({"action": "submit", "dryRun": True, "week": 8, "name": "Losing Hair Do Care", "picks": picks}))
-          PY
+          picks = [{'n': n, 'pick': 'home'} for n in range(1, 9)] + [{'n': n, 'pick': 'over'} for n in range(1, 8)]
+          print(json.dumps({'action': 'submit', 'dryRun': True, 'week': 8, 'name': 'Losing Hair Do Care', 'picks': picks}))" > body.json
           curl -sSL --max-time 60 -D headers.txt -H "Origin: https://wintz320.github.io" -H "Content-Type: text/plain;charset=utf-8" \
-            --data @body.json "${{ steps.url.outputs.url }}" -o reply.json
-          echo "--- final response headers"; grep -iE "^(HTTP|access-control-allow-origin|content-type)" headers.txt
-          echo "--- reply"; python3 -m json.tool reply.json
+            --data @body.json "$u" -o reply.json || true
+          grep -iE "^(HTTP|access-control-allow-origin|content-type)" headers.txt | tr -d '\r' > headers_short.txt || true
+          python3 - <<'PY'
+          import json
+          def note(title, path):
+              try:
+                  text = open(path, encoding='utf-8', errors='replace').read()
+              except OSError as e:
+                  text = 'missing: %s' % e
+              try:
+                  text = json.dumps(json.loads(text), ensure_ascii=False)
+              except ValueError:
+                  pass
+              text = text[:3800].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print('::notice title=%s::%s' % (title, text))
+          note('Slate', 'slate.json')
+          note('Self-test', 'selftest.json')
+          note('Dry-run headers', 'headers_short.txt')
+          note('Dry-run reply', 'reply.json')
+          PY
