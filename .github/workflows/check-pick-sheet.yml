@@ -24,8 +24,8 @@ jobs:
           u="$INPUT_URL"
           [ -n "$u" ] || u=$(python3 -c "import json; print(json.load(open('config.json')).get('picksApi', ''))")
           [ -n "$u" ] || { echo "::error::No URL given and picksApi is empty"; exit 1; }
-          curl -sSL --max-time 60 "$u?action=slate" -o slate.json || true
-          curl -sSL --max-time 60 "$u?action=selftest" -o selftest.json || true
+          curl -sSL --max-time 60 -w "%{http_code} %{num_redirects} %{url_effective}\\n" "$u?action=slate" -o slate.json > slate_meta.txt 2>&1 || true
+          curl -sSL --max-time 60 -w "%{http_code} %{num_redirects} %{url_effective}\\n" "$u?action=selftest" -o selftest.json > selftest_meta.txt 2>&1 || true
           python3 -c "
           import json
           picks = [{'n': n, 'pick': 'home'} for n in range(1, 9)] + [{'n': n, 'pick': 'over'} for n in range(1, 8)]
@@ -43,10 +43,17 @@ jobs:
               try:
                   text = json.dumps(json.loads(text), ensure_ascii=False)
               except ValueError:
-                  pass
+                  if '<html' in text[:500].lower():   # a Google page instead of JSON: keep its title and words
+                      import html, re
+                      t = re.search(r'<title[^>]*>(.*?)</title>', text, re.S | re.I)
+                      body = re.sub(r'<(script|style)[^>]*>.*?</\1>', ' ', text, flags=re.S | re.I)
+                      words = ' '.join(html.unescape(re.sub(r'<[^>]+>', ' ', body)).split())
+                      text = 'HTML page. Title: %s | Text: %s' % (t.group(1).strip() if t else '-', words[:1500])
               text = text[:3800].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
               print('::notice title=%s::%s' % (title, text))
+          note('Slate request', 'slate_meta.txt')
           note('Slate', 'slate.json')
+          note('Self-test request', 'selftest_meta.txt')
           note('Self-test', 'selftest.json')
           note('Dry-run headers', 'headers_short.txt')
           note('Dry-run reply', 'reply.json')
