@@ -21,6 +21,9 @@ var NEED = 15;              // picks per week
 var LOCK_WEEKDAY = 3;       // lines lock on Wednesday (Sunday = 0)
 var LOCK_HOUR = 18;         // at 6 PM Central
 var ESPN = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
+// ESPN sometimes turns Google's servers away. The pick'em site keeps a copy of the upcoming week
+// (data.json "upcoming", refreshed from ESPN by its hourly update), and the script uses that instead.
+var SITE_DATA = 'https://wintz320.github.io/pickem/data.json';
 var PICK_SHEET_ID = '1F2tJ4O-HmvlKSc843VxsGM5fStvkSCOr_Lh4K7N1NpE';   // used when the script isn't inside the sheet
 var PLAYERS_TAB = 'Players';
 var DEFAULT_PLAYERS = ['Losing Hair Do Care', 'Fin Diesel', 'Pump up the Gam', 'Hollywood', "Long Hair Don't Care",
@@ -51,7 +54,8 @@ function setup() {
   ScriptApp.newTrigger('hourly').timeBased().everyHours(1).create();
   hourly();
   var up = upcoming_();
-  Logger.log('Ready. Week ' + up.week + ' lines lock ' + fmt_(up.lockAt, 'EEE MMM d h:mm a') + ' CT.');
+  Logger.log('Ready. Week ' + up.week + ' lines lock ' + fmt_(up.lockAt, 'EEE MMM d h:mm a') + ' CT' +
+    (up.source === 'site' ? ' (lines via the pick’em site, since ESPN turned this script away).' : ' (lines from ESPN).'));
 }
 
 /** Runs every hour: locks next week's lines once it's time. */
@@ -62,7 +66,9 @@ function hourly() {
   if (nowMs < Date.parse(up.lockAt) || nowMs >= Date.parse(up.firstKickoff)) return;
   var ss = book_();
   if (ss.getSheetByName(linesTab_(up.week))) return;
-  writeLines_(ss, up.week, slate_(scoreboard_(up.week).events || []));
+  var games = weekGames_(up.week);
+  if (!games.length) return;
+  writeLines_(ss, up.week, games);
   CacheService.getScriptCache().remove('upcoming');
 }
 
@@ -71,7 +77,7 @@ function lockLinesNow() {
   CacheService.getScriptCache().remove('upcoming');
   var up = upcoming_(), ss = book_();
   if (ss.getSheetByName(linesTab_(up.week))) { Logger.log('Week ' + up.week + ' lines are already locked.'); return; }
-  writeLines_(ss, up.week, slate_(scoreboard_(up.week).events || []));
+  writeLines_(ss, up.week, weekGames_(up.week));
   Logger.log('Locked week ' + up.week + ' lines.');
 }
 
@@ -85,7 +91,9 @@ function doGet(e) {
     return json_({ ok: false, error: 'Unknown request.' });
   } catch (err) {
     console.error(err);
-    return json_({ ok: false, error: 'The pick sheet hit a problem. Try again in a minute.' });
+    var out = { ok: false, error: 'The pick sheet hit a problem. Try again in a minute.' };
+    if (action === 'selftest') out.detail = String((err && err.message) || err);
+    return json_(out);
   }
 }
 
@@ -167,7 +175,7 @@ function selftest_() {
   var probe = ss.insertSheet('Self-test ' + Date.now());
   ss.deleteSheet(probe);
   return {
-    ok: true, sheet: ss.getName(), players: players_(ss), upcomingWeek: up.week, opensAt: up.lockAt,
+    ok: true, sheet: ss.getName(), players: players_(ss), upcomingWeek: up.week, opensAt: up.lockAt, linesFrom: up.source,
     games: up.games.length, sample: g ? [formText_(g, 'home'), formText_(g, 'over')] : [],
     linesTabs: lineWeeks_(ss), hourlyCheck: ScriptApp.getProjectTriggers().some(function (t) { return t.getHandlerFunction() === 'hourly'; })
   };
@@ -186,19 +194,46 @@ function state_(ss) {
   return { status: 'upcoming', week: up.week, opensAt: up.lockAt, games: [] };
 }
 
-/** The next week whose games haven't started, with ESPN's current lines and when they lock. */
+/** The next week whose games haven't started, with the current lines and when they lock. */
 function upcoming_() {
   var cache = CacheService.getScriptCache(), hit = cache.get('upcoming');
   if (hit) return JSON.parse(hit);
-  var sb = scoreboard_(null), week = (sb.week && sb.week.number) || 1, games = slate_(sb.events || []);
-  if (!games.length || Date.parse(games[0].kickoff) <= Date.now()) {
-    week += 1;
-    games = slate_(scoreboard_(week).events || []);
+  var up;
+  try {
+    var sb = scoreboard_(null), week = (sb.week && sb.week.number) || 1, games = slate_(sb.events || []);
+    if (!games.length || Date.parse(games[0].kickoff) <= Date.now()) {
+      week += 1;
+      games = slate_(scoreboard_(week).events || []);
+    }
+    up = { week: week, games: games, source: 'ESPN' };
+  } catch (err) {
+    console.warn(err.message + '; using the pick’em site’s copy');
+    up = siteUpcoming_();
   }
-  var out = { week: week, firstKickoff: games.length ? games[0].kickoff : null,
-    lockAt: games.length ? lockAtFor_(games[0].kickoff) : null, games: games };
+  var out = { week: up.week, firstKickoff: up.games.length ? up.games[0].kickoff : null,
+    lockAt: up.games.length ? lockAtFor_(up.games[0].kickoff) : null, games: up.games, source: up.source };
   cache.put('upcoming', JSON.stringify(out), 1800);
   return out;
+}
+
+/** The pick'em site's copy of the upcoming week, which its hourly update takes from ESPN. */
+function siteUpcoming_() {
+  var r = UrlFetchApp.fetch(SITE_DATA + '?t=' + Date.now(), { muteHttpExceptions: true });
+  if (r.getResponseCode() !== 200) throw new Error('ESPN and the pick’em site both failed (the site answered ' + r.getResponseCode() + ')');
+  var up = JSON.parse(r.getContentText()).upcoming;
+  if (!up || !up.week || !up.games) throw new Error('The pick’em site has no upcoming week yet');
+  return { week: up.week, games: up.games, source: 'site' };
+}
+
+/** A week's games with the latest lines, for locking: ESPN, or the site's copy if ESPN turns the script away. */
+function weekGames_(week) {
+  try {
+    return slate_(scoreboard_(week).events || []);
+  } catch (err) {
+    var up = siteUpcoming_();
+    if (up.week !== week) throw new Error(err.message + ', and the pick’em site has week ' + up.week + ', not ' + week);
+    return up.games;
+  }
 }
 
 /** 6 PM Central on the Wednesday before the week's first game (or 24 hours before it, if that's a Wednesday). */

@@ -6,6 +6,8 @@ Inputs (fetched fresh on every run):
     and "Form Responses N" tabs from the Google Forms used before that
   - final scores for the season (nflverse, an open NFL data project)
   - live and just-finished games for the current week (ESPN's public scoreboard feed)
+  - the next week to be picked, with ESPN's current lines ("upcoming"); the pick sheet's script
+    reads this copy when ESPN turns Google's servers away
 The page grades every pick itself; this script only gathers raw inputs.
 
 Each week's picks are kept out of the public data until noon Sunday (Central) of that week.
@@ -13,6 +15,7 @@ If a source can't be reached, the last good copy of that input is kept.
 
 For local testing, point at files instead of the network:
   PICKEM_XLSX=path.xlsx  PICKEM_GAMES=games.csv  PICKEM_ESPN=scoreboard.json  PICKEM_NOW=ISO-time
+  PICKEM_ESPN_NEXT=scoreboard.json (the following week's scoreboard)
 """
 import csv
 import datetime as dt
@@ -116,12 +119,73 @@ def season_games():
     return out
 
 
-def apply_scoreboard(games):
+ESPN_URL = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard"
+
+
+def espn_board(week=None):
+    """ESPN's scoreboard for the current week, or for a given regular-season week."""
+    path = os.environ.get("PICKEM_ESPN_NEXT" if week else "PICKEM_ESPN")
+    if path:
+        return json.loads(open(path, "rb").read())
+    url = ESPN_URL if week is None else "%s?seasontype=2&week=%d&dates=%d" % (ESPN_URL, week, SEASON)
+    return json.loads(fetch(url, 30))
+
+
+def espn_odds(comp, home, away):
+    """ESPN's odds look like {details: "GB -7", overUnder: 45.5}; "EVEN" means a pick'em. Same as the sheet script."""
+    o = (comp.get("odds") or [{}])[0] or {}
+    total = o.get("overUnder") if isinstance(o.get("overUnder"), (int, float)) else None
+    out = {"homeLine": None, "awayLine": None, "total": total}
+    d = str(o.get("details") or "").strip()
+    if re.fullmatch(r"(?i)even|pk|pick", d):
+        out["homeLine"] = out["awayLine"] = 0
+        return out
+    m = re.fullmatch(r"([A-Z]{2,4})\s+([+-]?\d+(?:\.\d+)?)", d)
+    if m:
+        x = abs(float(m.group(2)))
+        x = int(x) if x.is_integer() else x
+        fav, dog = (-x if x else 0), x
+        if m.group(1) == home:
+            out["homeLine"], out["awayLine"] = fav, dog
+        elif m.group(1) == away:
+            out["awayLine"], out["homeLine"] = fav, dog
+    return out
+
+
+def espn_slate(board):
+    """A week's games from an ESPN scoreboard, in the same shape the pick sheet script builds."""
+    def team(t):
+        return {"abbr": ESPN_FIX.get(t["abbreviation"], t["abbreviation"]),
+                "name": t.get("shortDisplayName") or t["abbreviation"], "logo": t.get("logo") or ""}
+    out = []
+    events = sorted(board.get("events", []), key=lambda ev: str(ev.get("date", "")))
+    for i, ev in enumerate(events):
+        try:
+            comp = ev["competitions"][0]
+            side = {c["homeAway"]: c for c in comp["competitors"]}
+            h, a = side["home"]["team"], side["away"]["team"]
+            kickoff = dt.datetime.fromisoformat(ev["date"].replace("Z", "+00:00")).astimezone(dt.timezone.utc)
+            game = {"n": i + 1, "id": str(ev.get("id", "")), "kickoff": kickoff.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
+                    "home": team(h), "away": team(a)}
+            game.update(espn_odds(comp, h["abbreviation"], a["abbreviation"]))
+        except (KeyError, IndexError, ValueError, TypeError):
+            continue
+        out.append(game)
+    return out
+
+
+def upcoming_slate(board, now):
+    """The next week whose first game hasn't kicked off, with ESPN's current lines (same rule as the sheet script)."""
+    week = (board.get("week") or {}).get("number") or 1
+    games = espn_slate(board)
+    if not games or dt.datetime.fromisoformat(games[0]["kickoff"].replace("Z", "+00:00")) <= now:
+        week += 1
+        games = espn_slate(espn_board(week))
+    return {"week": week, "games": games}
+
+
+def apply_scoreboard(games, board):
     """Fold ESPN's current scoreboard into games (finals) and return in-progress games."""
-    path = os.environ.get("PICKEM_ESPN")
-    raw = open(path, "rb").read() if path else fetch(
-        "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard", 30)
-    board = json.loads(raw)
     live = {}
     for ev in board.get("events", []):
         try:
@@ -207,11 +271,20 @@ def main():
         if p and g.get("awayScore") is None and p.get("awayScore") is not None:
             g["awayScore"], g["homeScore"] = p["awayScore"], p["homeScore"]
 
+    board = None
     try:
-        live = apply_scoreboard(games)
+        board = espn_board()
+        live = apply_scoreboard(games, board)
     except Exception as e:
         problems.append("live scoreboard: %s" % e)
         live = {}
+
+    upcoming = old.get("upcoming")
+    if board is not None:
+        try:
+            upcoming = upcoming_slate(board, now)
+        except Exception as e:  # keep the last good copy
+            problems.append("upcoming week: %s" % e)
 
     try:
         tabs = sheet_tabs()
@@ -247,6 +320,8 @@ def main():
         "games": sorted(games, key=lambda g: (g["week"], g["date"], g["timeET"], g["id"])),
         "live": live,
     }
+    if upcoming:
+        data["upcoming"] = upcoming
     comparable = lambda d: json.dumps({k: v for k, v in d.items() if k != "updatedAt"}, sort_keys=True)
     changed = comparable(data) != comparable(old)
     data["updatedAt"] = now.isoformat(timespec="seconds") if changed else old.get("updatedAt")
