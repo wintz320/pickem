@@ -82,9 +82,11 @@ def sheet_tabs():
     if path:
         raw = open(path, "rb").read()
     else:
-        sheet_id = os.environ.get("SHEET_ID", "").strip()
+        with open(CONFIG, encoding="utf-8") as f:
+            sheet_id = (json.load(f).get("sheetId") or "").strip()
+        sheet_id = sheet_id or os.environ.get("SHEET_ID", "").strip()
         if not sheet_id:
-            raise RuntimeError("SHEET_ID secret is not set")
+            raise RuntimeError("no pick sheet: set sheetId in config.json")
         raw = fetch("https://docs.google.com/spreadsheets/d/%s/export?format=xlsx" % sheet_id, 90)
     if not raw.startswith(b"PK"):
         raise RuntimeError("the pick sheet isn't viewable by link (Google sent a sign-in page)")

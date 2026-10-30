@@ -24,7 +24,7 @@ var ESPN = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboar
 // ESPN sometimes turns Google's servers away. The pick'em site keeps a copy of the upcoming week
 // (data.json "upcoming", refreshed from ESPN by its hourly update), and the script uses that instead.
 var SITE_DATA = 'https://wintz320.github.io/pickem/data.json';
-var PICK_SHEET_ID = '1F2tJ4O-HmvlKSc843VxsGM5fStvkSCOr_Lh4K7N1NpE';   // used when the script isn't inside the sheet
+var PICK_SHEET_ID = '1g2Joz-98g54pcfzs2Sb2EeG8zUT4m27k4HgDPOnMH8U';   // used when the script isn't inside the sheet
 var PLAYERS_TAB = 'Players';
 var DEFAULT_PLAYERS = ['Losing Hair Do Care', 'Fin Diesel', 'Pump up the Gam', 'Hollywood', "Long Hair Don't Care",
   'Boss Baby', 'Big Cheese', 'Glamorace', 'Super Max', 'Jet', 'Koala Bears'];
