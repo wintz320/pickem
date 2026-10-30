@@ -4,7 +4,8 @@
 Usage: python3 scripts/set_news.py --week 7 --items items.json
 
 items.json is a list like:
-  [{"game": "PIT@NO", "news": "Steelers QB ... is out.", "source": "https://...", "published": "2026-10-23"}]
+  [{"game": "PIT@NO", "tag": "Injury", "news": "Steelers QB ... is out.", "source": "https://...", "published": "2026-10-23"}]
+"tag" is optional: Injury, Trend, Storyline, Hot, Cold or Weather (shown in place of "News").
 "game" is AWAY@HOME with the leaderboard's team codes (LA = Rams, WAS = Commanders); ESPN's
 LAR / WSH / JAC also work. Items with no news are skipped. Each game must be on that week's
 schedule in data.json, or the script stops without changing anything.
@@ -18,6 +19,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CODE = {"LAR": "LA", "WSH": "WAS", "JAC": "JAX", "LVR": "LV"}
 MAX_CHARS = 160
+TAGS = ["Injury", "Trend", "Storyline", "Hot", "Cold", "Weather"]
 
 
 def main():
@@ -52,7 +54,13 @@ def main():
         if len(text) > MAX_CHARS:
             problems.append("%s: news is %d characters; keep it to one short sentence" % (key, len(text)))
             continue
+        tag = str(it.get("tag") or "").strip().title()
+        if tag and tag not in TAGS:
+            problems.append("%s: tag %r isn't one of %s" % (key, it.get("tag"), ", ".join(TAGS)))
+            continue
         week[key] = {"text": text, "source": it.get("source") or "", "published": it.get("published") or ""}
+        if tag:
+            week[key]["tag"] = tag
         added += 1
     if problems:
         print("NOT SAVED:\n  " + "\n  ".join(problems))

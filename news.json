@@ -74,71 +74,84 @@
     "published": "2026-10-27"
    },
    "ARI@DAL": {
-    "text": "Cardinals QB Carson Beck is dealing with back spasms, per coach Mike LaFleur.",
-    "source": "https://www.nbcsports.com/fantasy/football/player-news/2026-10-23/carson-beck-dealing-with-back-spasms",
-    "published": "2026-10-23"
+    "text": "CeeDee Lamb is torching everybody: 651 yards and six TDs. Arizona's secondary is next on the menu.",
+    "source": "https://www.si.com/betting/cardinals-vs-cowboys-prediction-odds-spread-injuries-trends-for-nfl-week-8-2026",
+    "published": "2026-10-27",
+    "tag": "Hot"
    },
    "ATL@TB": {
-    "text": "Bucs WR Emeka Egbuka (concussion, foot) is questionable after missing Week 7.",
-    "source": "https://clutchpoints.com/nfl/tampa-bay-buccaneers/buccaneers-news-emeka-egbuka-gets-murky-injury-update-falcons-game",
-    "published": "2026-10-27"
+    "text": "Baker's thumb is fine: he just ran Carolina off the field. Bucs WR Emeka Egbuka (concussion, foot) is questionable.",
+    "source": "https://www.si.com/betting/falcons-vs-buccaneers-prediction-odds-spread-injuries-trends-for-nfl-week-8-2026",
+    "published": "2026-10-27",
+    "tag": "Storyline"
    },
    "BAL@BUF": {
-    "text": "Ravens QB Lamar Jackson (ankle) is expected to play against the Bills, per Ian Rapoport.",
+    "text": "Lamar's expected back for the Ravens, but by his own words he's \"not even close\" to his full capability. Bills, take note.",
     "source": "https://essentiallysports.com/nfl-active-news-nfl-week-eight-injury-report-lamar-jackson-expected-to-return-uncertainty-looms-over-rice-more",
-    "published": "2026-10-28"
+    "published": "2026-10-28",
+    "tag": "Injury"
    },
    "CLE@PIT": {
-    "text": "Steelers WR Michael Pittman Jr. remains on injured reserve and reportedly could miss the rest of the year.",
-    "source": "https://sports.yahoo.com/articles/steelers-injury-situation-finally-trending-120006491.html",
-    "published": "2026-10-27"
+    "text": "Revenge game: Cleveland beat Pittsburgh in Week 5 while Aaron Rodgers threw two picks. The Steelers want that one back.",
+    "source": "https://www.si.com/betting/browns-vs-steelers-prediction-odds-spread-injuries-trends-for-nfl-week-8-01m5x0nwsv5w",
+    "published": "2026-10-27",
+    "tag": "Storyline"
    },
    "IND@JAX": {
-    "text": "Colts TE Tyler Warren has missed two straight games with a groin injury.",
-    "source": "https://essentiallysports.com/nfl-active-news-nfl-week-eight-injury-report-lamar-jackson-expected-to-return-uncertainty-looms-over-rice-more",
-    "published": "2026-10-28"
+    "text": "Trevor Lawrence finally woke up: two recent 300-yard games and 14 TD passes, tied for fourth-most in the league.",
+    "source": "https://www.si.com/betting/colts-vs-jaguars-prediction-odds-spread-injuries-trends-for-nfl-week-8-01m5x10j3wbj",
+    "published": "2026-10-27",
+    "tag": "Hot"
    },
    "LV@NYJ": {
-    "text": "Jets RB Breece Hall missed Week 7 with a quad injury but is expected back Sunday.",
-    "source": "https://essentiallysports.com/nfl-active-news-nfl-week-eight-injury-report-lamar-jackson-expected-to-return-uncertainty-looms-over-rice-more",
-    "published": "2026-10-28"
+    "text": "Kirk Cousins leads the NFL with 16 TD passes. Yes, that Kirk Cousins. Rookie Fernando Mendoza keeps waiting.",
+    "source": "https://www.si.com/betting/raiders-vs-jets-prediction-odds-spread-injuries-trends-for-nfl-week-8-01m5x142k9w6",
+    "published": "2026-10-27",
+    "tag": "Hot"
    },
    "MIN@DET": {
-    "text": "Vikings RB Aaron Jones is day-to-day after leaving Week 7 with a knee injury.",
-    "source": "https://essentiallysports.com/nfl-active-news-nfl-week-eight-injury-report-lamar-jackson-expected-to-return-uncertainty-looms-over-rice-more",
-    "published": "2026-10-28"
+    "text": "The Lions are 1-4-1 against the spread, and Vegas has them laying a field goal at home again anyway.",
+    "source": "https://www.si.com/betting/vikings-vs-lions-prediction-odds-spread-injuries-trends-for-nfl-week-8-2026",
+    "published": "2026-10-27",
+    "tag": "Trend"
    },
    "TEN@CIN": {
-    "text": "Bengals S Kyle Dugger is out, and Titans WR Calvin Ridley is questionable.",
+    "text": "Joe Burrow (15 TDs, 3 INTs) is in the MVP chat. The Titans are in the worst-team-in-football chat.",
     "source": "https://www.si.com/betting/titans-vs-bengals-prediction-odds-spread-injuries-trends-for-nfl-week-8-2026",
-    "published": "2026-10-27"
+    "published": "2026-10-27",
+    "tag": "Hot"
    },
    "LAC@LA": {
-    "text": "Rams WR Davante Adams is out for at least a few more weeks.",
+    "text": "Justin Herbert ranks dead last in adjusted EPA per play. Puka Nacua gets fed while Davante Adams is out.",
     "source": "https://www.si.com/betting/chargers-vs-rams-prediction-odds-spread-injuries-trends-for-nfl-week-8-2026",
-    "published": "2026-10-27"
+    "published": "2026-10-27",
+    "tag": "Cold"
    },
    "KC@DEN": {
-    "text": "Broncos WR Jaylen Waddle is uncertain after leaving Week 7 with a chest injury.",
-    "source": "https://essentiallysports.com/nfl-active-news-nfl-week-eight-injury-report-lamar-jackson-expected-to-return-uncertainty-looms-over-rice-more",
-    "published": "2026-10-28"
+    "text": "Denver's offense ranks 29th in success rate, and Seattle held Kenneth Walker to 36 rushing yards last week. Pass the popcorn.",
+    "source": "https://www.si.com/betting/chiefs-vs-broncos-prediction-odds-spread-injuries-trends-for-nfl-week-8-2026",
+    "published": "2026-10-27",
+    "tag": "Cold"
    },
    "NE@MIA": {
-    "text": "Dolphins RB De'Von Achane is out for the season.",
-    "source": "https://essentiallysports.com/nfl-active-news-nfl-week-eight-injury-report-lamar-jackson-expected-to-return-uncertainty-looms-over-rice-more",
-    "published": "2026-10-28"
+    "text": "Drake Maye has been quietly fantastic, and Miami is without De'Von Achane. The Dolphins are getting a touchdown at home.",
+    "source": "https://www.si.com/betting/patriots-vs-dolphins-prediction-odds-spread-injuries-trends-for-nfl-week-8-2026",
+    "published": "2026-10-27",
+    "tag": "Hot"
    },
    "PHI@WAS": {
-    "text": "Eagles QB Jalen Hurts is out for the season with blood clots.",
-    "source": "https://essentiallysports.com/nfl-active-news-nfl-week-eight-injury-report-lamar-jackson-expected-to-return-uncertainty-looms-over-rice-more",
-    "published": "2026-10-28"
+    "text": "The Eagles are without their franchise QB, and Jayden Daniels is still hunting his first win. Somebody's gotta win this.",
+    "source": "https://www.inquirer.com/eagles/commanders-nfl-week-8-jayden-daniels-tanner-mckee-20261028.html",
+    "published": "2026-10-28",
+    "tag": "Storyline"
    },
    "CHI@SEA": {
-    "text": "Bears RB Kyle Monangai (turf toe) missed Tuesday's practice after sitting out three games.",
-    "source": "https://sports.yahoo.com/articles/bears-few-early-injury-situations-190619909.html",
-    "published": "2026-10-27"
+    "text": "The Bears are an NFL-best 5-2 against the spread and have covered every game Caleb Williams started and finished.",
+    "source": "https://www.si.com/betting/bears-vs-seahawks-prediction-odds-spread-injuries-trends-for-nfl-week-8-2026",
+    "published": "2026-10-28",
+    "tag": "Trend"
    }
   }
  },
- "updatedAt": "2026-10-28T14:30:05+00:00"
+ "updatedAt": "2026-10-30T01:50:20+00:00"
 }

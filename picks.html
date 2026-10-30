@@ -213,7 +213,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   function newsFor(g) {
     var wk = S.news && S.news.weeks && S.news.weeks[String(S.week)];
     var item = wk && wk[(CODE[g.away.abbr] || g.away.abbr) + '@' + (CODE[g.home.abbr] || g.home.abbr)];
-    return item && item.text ? item.text : null;
+    return item && item.text ? item : null;
   }
 
   function esc(s) {
@@ -414,7 +414,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
       '<div class="gc-meta"><span>' + esc(when(g.kickoff)) + '</span><span>' + esc(status) + '</span></div>' +
       '<div class="gc-sides">' + teamBtn(g, 'away', enabled) + '<span class="at" aria-hidden="true">at</span>' + teamBtn(g, 'home', enabled) + '</div>' +
       '<div class="gc-totals">' + totBtn(g, 'over', enabled) + totBtn(g, 'under', enabled) + '</div>' +
-      (newsFor(g) ? '<p class="gc-news"><b>News</b>' + esc(newsFor(g)) + '</p>' : '') + '</article>';
+      (newsFor(g) ? '<p class="gc-news"><b>' + esc(newsFor(g).tag || 'News') + '</b>' + esc(newsFor(g).text) + '</p>' : '') + '</article>';
   }
   function renderGames() {
     if (S.mode === 'error') { $('games').innerHTML = '<div class="empty">No games to show right now.</div>'; return; }

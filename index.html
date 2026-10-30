@@ -748,7 +748,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
   }
   function newsLine(g) {
     var n = newsFor(g);
-    return n ? '<p class="game-news"><span class="news-tag">News</span>' + esc(n.text) + '</p>' : '';
+    return n ? '<p class="game-news"><span class="news-tag">' + esc(n.tag || 'News') + '</span>' + esc(n.text) + '</p>' : '';
   }
   function gameNotes(w) {
     if (!news) return '';
@@ -756,7 +756,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
       .sort(function (a, b) { return kickoffAt(a) - kickoffAt(b); });
     if (!gs.length) return '';
     return '<h3 class="notes-h">Game news</h3><ul class="notes">' + gs.map(function (g) {
-      return '<li><div class="nt-g">' + esc(matchup(g)) + '<span>' + esc(kickoff(g)) + '</span></div><p>' + esc(newsFor(g).text) + '</p></li>';
+      return '<li><div class="nt-g">' + esc(matchup(g)) + '<span>' + esc(kickoff(g)) + '</span></div><p><span class="news-tag">' + esc(newsFor(g).tag || 'News') + '</span>' + esc(newsFor(g).text) + '</p></li>';
     }).join('') + '</ul>';
   }
   var ui = { view: 'season', open: {} };
