@@ -119,6 +119,7 @@ function slateResponse_() {
   if (st.status === 'open') {
     out.lockedAt = PropertiesService.getScriptProperties().getProperty('LOCKED_' + st.week) || null;
     out.submitted = submitted_(ss, st.week);
+    out.carried = carried_(ss, st.week, st.games);
   }
   if (st.opensAt) out.opensAt = st.opensAt;
   return out;
@@ -141,19 +142,19 @@ function submit_(ss, body, now) {
   var started = function (n) { return Date.parse(byN[n].kickoff) <= now.getTime(); };
   var key = function (p) { return p.n + ':' + p.pick; };
 
-  // Picks on games that already kicked off can't change.
+  // Picks on games that already kicked off can't change: the ones already on file carry over
+  // (the page counts them toward the 15), and new ones on those games are turned away.
   var prev = ((latestByName_(ss, st.week)[name] || {}).picks || []).filter(function (p) { return byN[p.n]; });
-  var before = prev.filter(function (p) { return started(p.n); }).map(key).sort();
-  var after = picks.filter(function (p) { return started(p.n); }).map(key).sort();
-  var added = after.filter(function (k) { return before.indexOf(k) < 0; });
-  var dropped = before.filter(function (k) { return after.indexOf(k) < 0; });
-  var gameOf = function (k) { var g = byN[Number(k.split(':')[0])]; return g.away.name + ' at ' + g.home.name; };
-  if (added.length && dropped.length && added[0].split(':')[0] === dropped[0].split(':')[0]) {
-    throw userError_(gameOf(added[0]) + ' already kicked off, so that pick can’t change.');
+  var kept = prev.filter(function (p) { return started(p.n); });
+  var before = kept.map(key);
+  var added = picks.filter(function (p) { return started(p.n) && before.indexOf(key(p)) < 0; });
+  if (added.length) {
+    var ag = byN[added[0].n];
+    throw userError_(ag.away.name + ' at ' + ag.home.name + ' already kicked off, so it can’t be picked or changed now.');
   }
-  if (added.length) throw userError_(gameOf(added[0]) + ' already kicked off, so it can’t be picked now.');
-  if (dropped.length) throw userError_('Your pick on ' + gameOf(dropped[0]) + ' is locked because that game kicked off. ' +
-    'Change your other picks on the phone you first used, or ask the organizer to change them in the sheet.');
+  var isSide = function (p) { return p.pick === 'home' || p.pick === 'away' ? 0 : 1; };
+  picks = picks.filter(function (p) { return !started(p.n); }).concat(kept)
+    .sort(function (a, b) { return a.n - b.n || isSide(a) - isSide(b); });
   if (picks.length !== NEED) throw userError_('Pick exactly ' + NEED + '. You sent ' + picks.length + '.');
   picks.forEach(function (p) {
     var g = byN[p.n], side = p.pick === 'home' || p.pick === 'away';
@@ -347,6 +348,17 @@ function latestByName_(ss, week) {
     try { picks = JSON.parse(v[i][3] || '[]'); } catch (ignore) {}
     if (!out[name] || at.getTime() >= out[name].at.getTime()) out[name] = { at: at, picks: picks };
   }
+  return out;
+}
+
+/** How many of each player's picks are on games that already kicked off (they carry over). */
+function carried_(ss, week, games) {
+  var nowMs = Date.now(), started = {}, out = {}, latest = latestByName_(ss, week);
+  games.forEach(function (g) { if (Date.parse(g.kickoff) <= nowMs) started[g.n] = true; });
+  Object.keys(latest).forEach(function (name) {
+    var n = (latest[name].picks || []).filter(function (p) { return started[p.n]; }).length;
+    if (n) out[name] = n;
+  });
   return out;
 }
 

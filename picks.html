@@ -207,7 +207,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   var $ = function (id) { return document.getElementById(id); };
   var S = {
     mode: 'loading', why: null, api: null, season: 2026, week: null, games: [], players: [],
-    submitted: {}, name: null, sel: {}, offset: 0, opensAt: null, lockedAt: null, saving: false, done: null, news: null
+    submitted: {}, carried: {}, name: null, sel: {}, offset: 0, opensAt: null, lockedAt: null, saving: false, done: null, news: null
   };
   var CODE = { LAR: 'LA', WSH: 'WAS', JAC: 'JAX' };   // ESPN codes -> the leaderboard's
   function newsFor(g) {
@@ -242,9 +242,15 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   function isLocked(g) { return now() >= Date.parse(g.kickoff); }
   function hasSide(g) { return g.homeLine != null && g.awayLine != null && !isNaN(g.homeLine); }
   function hasTotal(g) { return g.total != null && !isNaN(g.total); }
+  function carriedN() { return (S.mode === 'open' && S.name && S.carried[S.name]) || 0; }
+  // Picks on games that already kicked off are on file with the pick sheet (carried); only open games count from here.
   function count() {
-    var c = 0;
-    Object.keys(S.sel).forEach(function (n) { if (S.sel[n].side) c++; if (S.sel[n].total) c++; });
+    var c = carriedN();
+    Object.keys(S.sel).forEach(function (n) {
+      var g = gameByN(+n);
+      if (S.mode === 'open' && g && isLocked(g)) return;
+      if (S.sel[n].side) c++; if (S.sel[n].total) c++;
+    });
     return c;
   }
   function gameByN(n) { for (var i = 0; i < S.games.length; i++) if (S.games[i].n === n) return S.games[i]; return null; }
@@ -315,6 +321,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
         if (s.players && s.players.length) S.players = s.players;
         S.submitted = {};
         (s.submitted || []).forEach(function (x) { S.submitted[x.name] = x.at; });
+        S.carried = s.carried || {};
         if (s.status === 'open') {
           S.mode = 'open'; S.week = s.week; S.games = s.games || []; S.lockedAt = s.lockedAt || null;
           restore(); render(); return;
@@ -383,6 +390,8 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     if (S.mode === 'open') {
       note = inNames.length ? inNames.length + ' of ' + S.players.length + ' have picks in (green dot).' : 'Nobody has picks in yet.';
       if (S.name && S.submitted[S.name]) note += ' Your picks went in ' + when(S.submitted[S.name]) + ' CT.';
+      if (carriedN()) note += ' ' + (carriedN() === 1 ? 'Your pick on a game that already kicked off is' : 'Your ' + carriedN() + ' picks on games that already kicked off are') +
+        ' saved and count toward your ' + NEED + '.';
     }
     $('names-note').textContent = note;
     $('names-note').hidden = !note;
@@ -494,11 +503,12 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     if (!S.name) { toast('Tap your name first.'); $('who-h').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     var picks = [];
     Object.keys(S.sel).forEach(function (n) {
-      var s = S.sel[n];
+      var s = S.sel[n], g = gameByN(+n);
+      if (g && isLocked(g)) return;   // already on file with the pick sheet
       if (s.side) picks.push({ n: +n, pick: s.side });
       if (s.total) picks.push({ n: +n, pick: s.total });
     });
-    if (picks.length !== NEED) { toast('Pick ' + NEED + ' to submit. You have ' + picks.length + '.'); return; }
+    if (picks.length + carriedN() !== NEED) { toast('Pick ' + NEED + ' to submit. You have ' + (picks.length + carriedN()) + '.'); return; }
     S.saving = true; renderBar();
     fetch(S.api, {
       method: 'POST',
