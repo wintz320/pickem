@@ -110,6 +110,9 @@ h2 {
   color: #131B2E; font-size: 11px; font-weight: 800; letter-spacing: .02em;
 }
 .logo img { width: 32px; height: 32px; object-fit: contain; display: block; }
+.lg { display: grid; justify-items: center; gap: 3px; }
+.rec { font-size: 11px; font-weight: 700; line-height: 1; color: var(--ink-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.opt.on .rec { color: var(--pick-fg); opacity: .85; }
 .tm { display: grid; min-width: 0; }
 .tm-name { font-weight: 700; font-size: 14.5px; font-stretch: 92%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tm-line { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1; font-variant-numeric: tabular-nums; }
@@ -261,6 +264,25 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     toast.timer = setTimeout(function () { t.classList.remove('show'); }, 3200);
   }
 
+  /* ---------- team records (W-L or W-L-T) from finished games in data.json ---------- */
+  var CODE = { LAR: 'LA', WSH: 'WAS', JAC: 'JAX', LVR: 'LV' };
+  function records(games) {
+    var r = {};
+    function add(t, k) { (r[t] = r[t] || { w: 0, l: 0, t: 0 })[k]++; }
+    games.forEach(function (g) {
+      if (typeof g.awayScore !== 'number' || typeof g.homeScore !== 'number') return;
+      if (g.awayScore === g.homeScore) { add(g.away, 't'); add(g.home, 't'); }
+      else if (g.awayScore > g.homeScore) { add(g.away, 'w'); add(g.home, 'l'); }
+      else { add(g.home, 'w'); add(g.away, 'l'); }
+    });
+    return r;
+  }
+  function recordOf(abbr) {
+    var x = S.records && S.records[CODE[abbr] || abbr];
+    if (!x) return S.records ? '0-0' : '';
+    return x.w + '-' + x.l + (x.t ? '-' + x.t : '');
+  }
+
   /* ---------- ESPN preview slate ---------- */
   function teamOf(c) {
     var t = (c && c.team) || {};
@@ -313,6 +335,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
       var cfg = (d && d.config) || {};
       S.api = cfg.picksApi || null;
       S.season = (d && d.season) || 2026;
+      S.records = records((d && d.games) || []);
       S.players = Object.keys(cfg.players || {}).map(function (k) { return cfg.players[k].name; });
       if (!S.api) return startPreview(null, 'setup');
       return getJSON(S.api + '?action=slate').then(function (s) {
@@ -403,11 +426,12 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   }
   function teamBtn(g, role, enabled) {
     var t = g[role], line = role === 'home' ? g.homeLine : g.awayLine, a = optAttrs(g, 'side', role, enabled && hasSide(g));
-    var label = t.name + ' ' + fmtLine(line) + (role === 'home' ? ' at home' : ' on the road');
+    var rec = recordOf(t.abbr);
+    var label = t.name + (rec ? ' (' + rec + ')' : '') + ' ' + fmtLine(line) + (role === 'home' ? ' at home' : ' on the road');
     return '<button class="opt team' + (a.on ? ' on' : '') + '" type="button"' + a.attrs + ' aria-label="' + esc(label) + '">' +
-      '<span class="logo" data-abbr="' + esc(t.abbr) + '">' +
+      '<span class="lg"><span class="logo" data-abbr="' + esc(t.abbr) + '">' +
       (t.logo ? '<img src="' + esc(t.logo) + '" alt="" loading="lazy" width="32" height="32" onerror="this.parentNode.textContent=this.parentNode.getAttribute(\'data-abbr\')">' : esc(t.abbr)) +
-      '</span><span class="tm"><span class="tm-name">' + esc(t.name) + '</span><span class="tm-line">' + esc(fmtLine(line)) + '</span></span>' +
+      '</span>' + (rec ? '<span class="rec">' + esc(rec) + '</span>' : '') + '</span><span class="tm"><span class="tm-name">' + esc(t.name) + '</span><span class="tm-line">' + esc(fmtLine(line)) + '</span></span>' +
       '<span class="tick">' + TICK + '</span></button>';
   }
   function totBtn(g, val, enabled) {
