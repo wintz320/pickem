@@ -151,7 +151,99 @@
     "published": "2026-10-28",
     "tag": "Trend"
    }
+  },
+  "9": {
+   "JAX@BAL": {
+    "text": "Lamar Jackson is out and third-stringer Joe Fagnano starts. Vegas noticed: Baltimore went from lookahead favorite to a 10-point home dog.",
+    "source": "https://www.si.com/betting/jaguars-vs-ravens-odds-continue-to-shift-towards-jacksonville-with-joe-fagnano-set-to-start-in-nfl-week-9",
+    "published": "2026-11-04",
+    "tag": "Injury"
+   },
+   "CIN@ATL": {
+    "text": "Joe Burrow leads all QBs with 20 TD passes, and the Over is 4-1 in the last five Bengals-Falcons games. Madrid, warm up the scoreboard.",
+    "source": "https://www.si.com/betting/bengals-vs-falcons-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
+    "published": "2026-11-02",
+    "tag": "Hot"
+   },
+   "CLE@NO": {
+    "text": "The Saints haven't won a home game this season, and all three Browns losses came on the road. Somebody's streak dies in the Dome.",
+    "source": "https://www.si.com/betting/browns-vs-saints-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
+    "published": "2026-11-03",
+    "tag": "Trend"
+   },
+   "DAL@IND": {
+    "text": "Dallas is 3-0 when scoring 34+ and 0-5 otherwise. The Colts scored 22, 20, 10, then 7. That's a countdown, not a trend.",
+    "source": "https://dallascowboys.com/news/big-picture-10-storylines-for-cowboys-colts",
+    "published": "2026-11-03",
+    "tag": "Trend"
+   },
+   "DEN@CAR": {
+    "text": "Bo Nix has 15 game-winning drives, the most by any QB in his first three seasons since the merger. Don't leave early.",
+    "source": "https://www.cbssports.com/fantasy/football/news/broncos-bo-nix-engineers-another-fourth-quarter-comeback/",
+    "published": "2026-11-01",
+    "tag": "Hot"
+   },
+   "DET@MIA": {
+    "text": "Jahmyr Gibbs has 773 rushing yards and eight rushing TDs in seven games. The 1-6 Dolphins draw him next. Good luck with that.",
+    "source": "https://www.si.com/betting/lions-vs-dolphins-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
+    "published": "2026-11-03",
+    "tag": "Hot"
+   },
+   "LA@WAS": {
+    "text": "The Rams ride a two-game win streak into D.C., while Washington plays on without Terry McLaurin, out for the season. Streak No. 3 on deck?",
+    "source": "https://www.therams.com/news/first-look-rams-visit-commanders-in-week-9-2026-seeking-to-extend-win-streak-to-three-games",
+    "published": "2026-11-03",
+    "tag": "Storyline"
+   },
+   "NYG@PHI": {
+    "text": "Jalen Hurts is out for the season, and Sirianni is sticking with Tanner McKee, 0-3 as a starter: \"Tanner's our guy.\" Bold words.",
+    "source": "https://www.nbcsportsphiladelphia.com/nfl/philadelphia-eagles/nick-sirianni-sticking-with-sean-mannion-and-tanner-mckee/763795/",
+    "published": "2026-11-02",
+    "tag": "Injury"
+   },
+   "NYJ@KC": {
+    "text": "The Jets scored on their first six drives vs. the Raiders, the first team to do that this season. They still lost 38-33. Very Jets.",
+    "source": "https://www.newyorkjets.com/news/3-takeaways-jets-offense-scored-on-first-six-possessions-vs-raiders-11-02-2026",
+    "published": "2026-11-02",
+    "tag": "Hot"
+   },
+   "HOU@LAC": {
+    "text": "The 0-7 Chargers are 0-6-1 against the spread, and the Under is 6-1 in their games. Bring a book.",
+    "source": "https://www.si.com/betting/texans-vs-chargers-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
+    "published": "2026-11-03",
+    "tag": "Cold"
+   },
+   "LV@SF": {
+    "text": "The Raiders are 6-2 ATS, and Kirk Cousins has 19 TDs with just five picks. Yes, that Kirk Cousins.",
+    "source": "https://www.si.com/betting/raiders-vs-49ers-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
+    "published": "2026-11-03",
+    "tag": "Trend"
+   },
+   "ARI@SEA": {
+    "text": "Gardner Minshew makes his first start of the year for Arizona. Seattle has won the last 10 meetings, so no pressure, Gardner.",
+    "source": "https://www.si.com/nfl/seahawks/onsi/best-worst-likeliest-scenarios-cardinals-vs-seahawks-week-9",
+    "published": "2026-11-04",
+    "tag": "Injury"
+   },
+   "GB@NE": {
+    "text": "The Under is 5-0 in the Packers' last five games. The Over is 5-0 in the Patriots' last five. Something has to give.",
+    "source": "https://www.si.com/betting/packers-vs-patriots-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
+    "published": "2026-11-03",
+    "tag": "Trend"
+   },
+   "TB@CHI": {
+    "text": "Chicago is 4-0 when Caleb Williams starts and finishes, scoring 30+ every time. Tampa won last week without completing a pass.",
+    "source": "https://www.si.com/betting/buccaneers-vs-bears-opening-odds-chicago-set-as-major-favorite-on-sunday-night-in-week-9",
+    "published": "2026-11-03",
+    "tag": "Hot"
+   },
+   "BUF@MIN": {
+    "text": "Kyler Murray is questionable with a sore hamstring. If he can't go, Carson Wentz gets the Monday night spotlight against Buffalo.",
+    "source": "https://www.si.com/betting/kyler-murray-injury-update-causes-minor-shift-to-vikings-odds-vs-bills-in-nfl-week-9",
+    "published": "2026-11-02",
+    "tag": "Injury"
+   }
   }
  },
- "updatedAt": "2026-11-01T15:16:05+00:00"
+ "updatedAt": "2026-11-04T15:24:15+00:00"
 }
