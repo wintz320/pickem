@@ -155,7 +155,10 @@ function submit_(ss, body, now) {
   var isSide = function (p) { return p.pick === 'home' || p.pick === 'away' ? 0 : 1; };
   picks = picks.filter(function (p) { return !started(p.n); }).concat(kept)
     .sort(function (a, b) { return a.n - b.n || isSide(a) - isSide(b); });
-  if (picks.length !== NEED) throw userError_('Pick exactly ' + NEED + '. You sent ' + picks.length + '.');
+  // Fewer than 15 is fine: people can save Thursday's pick now and finish the rest later.
+  // Each new submission replaces that person's picks on games that haven't kicked off.
+  if (!picks.length) throw userError_('Pick at least one to save.');
+  if (picks.length > NEED) throw userError_('That’s more than ' + NEED + ' picks. You sent ' + picks.length + '.');
   picks.forEach(function (p) {
     var g = byN[p.n], side = p.pick === 'home' || p.pick === 'away';
     if (side && (g.homeLine == null || g.awayLine == null)) throw userError_(g.away.name + ' at ' + g.home.name + ' doesn’t have a spread yet.');
@@ -168,7 +171,7 @@ function submit_(ss, body, now) {
   if (body.dryRun) return { ok: true, dryRun: true, at: now.toISOString(), week: st.week, text: text, picks: labels };
   var sh = ss.getSheetByName(picksTab_(st.week)) || newPicksTab_(ss, st.week);
   sh.appendRow(row);
-  return { ok: true, at: now.toISOString(), week: st.week, picks: labels };
+  return { ok: true, at: now.toISOString(), week: st.week, n: picks.length, picks: labels };
 }
 
 function selftest_() {
@@ -364,7 +367,9 @@ function carried_(ss, week, games) {
 
 function submitted_(ss, week) {
   var latest = latestByName_(ss, week);
-  return Object.keys(latest).map(function (n) { return { name: n, at: latest[n].at.toISOString() }; });
+  return Object.keys(latest).map(function (n) {
+    return { name: n, at: latest[n].at.toISOString(), n: (latest[n].picks || []).length };
+  });
 }
 
 function clean_(list, byN) {

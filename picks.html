@@ -86,6 +86,7 @@ h2 {
 .name:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
 .name[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .name .in { width: 7px; height: 7px; border-radius: 50%; background: var(--win); flex: none; }
+.name .in.part { background: transparent; box-shadow: inset 0 0 0 1.5px var(--win); }
 .note { font-size: 12.5px; color: var(--ink-soft); margin: 8px 0 0; }
 
 .day { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin: 20px 0 8px; }
@@ -189,7 +190,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     <div id="games"></div>
   </section>
   <footer>
-    <p>Pick 15: any mix of sides and totals, at most one side and one total per game. A pick wins if that team covers the spread, or the combined score goes over or under the total.</p>
+    <p>Pick 15: any mix of sides and totals, at most one side and one total per game. You can save a few now (say, Thursday&rsquo;s game) and come back for the rest. A pick wins if that team covers the spread, or the combined score goes over or under the total.</p>
     <p>Lines are DraftKings&rsquo; numbers, locked Wednesday evening. Team logos come from ESPN.</p>
   </footer>
 </div>
@@ -343,7 +344,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
         if (s.serverNow) S.offset = Date.parse(s.serverNow) - Date.now();
         if (s.players && s.players.length) S.players = s.players;
         S.submitted = {};
-        (s.submitted || []).forEach(function (x) { S.submitted[x.name] = x.at; });
+        (s.submitted || []).forEach(function (x) { S.submitted[x.name] = { at: x.at, n: x.n == null ? NEED : x.n }; });
         S.carried = s.carried || {};
         if (s.status === 'open') {
           S.mode = 'open'; S.week = s.week; S.games = s.games || []; S.lockedAt = s.lockedAt || null;
@@ -374,7 +375,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     var lead = 'Pick ' + NEED + ': any mix of sides and totals. Each game locks at kickoff.';
     var banner = '';
     if (S.mode === 'open') {
-      lead = 'Pick ' + NEED + ': any mix of sides and totals. You can change a pick until that game kicks off.';
+      lead = 'Pick ' + NEED + ': any mix of sides and totals. Save some now (like Thursday’s game) and finish the rest later; you can change a pick until that game kicks off.';
       if (S.lockedAt) banner = 'Lines are DraftKings’ numbers as of ' + esc(when(S.lockedAt)) + ' CT.';
     } else if (S.mode === 'preview') {
       if (S.why === 'upcoming' && S.opensAt) {
@@ -402,17 +403,22 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   function renderNames() {
     var h = '';
     S.players.forEach(function (p) {
-      var on = p === S.name, inn = S.submitted[p];
+      var on = p === S.name, inn = S.submitted[p], part = inn && inn.n < NEED;
       h += '<button class="name" type="button" data-name="' + esc(p) + '" aria-pressed="' + on + '"' +
-        (inn ? ' aria-label="' + esc(p) + ', picks in"' : '') + '>' +
-        (inn ? '<span class="in" aria-hidden="true"></span>' : '') + esc(p) + '</button>';
+        (inn ? ' aria-label="' + esc(p) + (part ? ', ' + inn.n + ' of ' + NEED + ' picks in' : ', picks in') + '"' : '') + '>' +
+        (inn ? '<span class="in' + (part ? ' part' : '') + '" aria-hidden="true"></span>' : '') + esc(p) + '</button>';
     });
     $('names').innerHTML = h || '<span class="note">No player list yet.</span>';
     var note = '';
     var inNames = S.players.filter(function (p) { return S.submitted[p]; });
     if (S.mode === 'open') {
-      note = inNames.length ? inNames.length + ' of ' + S.players.length + ' have picks in (green dot).' : 'Nobody has picks in yet.';
-      if (S.name && S.submitted[S.name]) note += ' Your picks went in ' + when(S.submitted[S.name]) + ' CT.';
+      var partN = inNames.filter(function (p) { return S.submitted[p].n < NEED; }).length;
+      note = inNames.length ? inNames.length + ' of ' + S.players.length + ' have picks in (green dot' +
+        (partN ? '; hollow means some saved, not all ' + NEED : '') + ').' : 'Nobody has picks in yet.';
+      var mineIn = S.name && S.submitted[S.name];
+      if (mineIn) note += mineIn.n < NEED
+        ? ' You’ve saved ' + mineIn.n + ' of ' + NEED + ' (last ' + when(mineIn.at) + ' CT). Come back before kickoff to add the rest.'
+        : ' Your picks went in ' + when(mineIn.at) + ' CT.';
       if (carriedN()) note += ' ' + (carriedN() === 1 ? 'Your pick on a game that already kicked off is' : 'Your ' + carriedN() + ' picks on games that already kicked off are') +
         ' saved and count toward your ' + NEED + '.';
     }
@@ -473,8 +479,9 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     $('meter').innerHTML = m;
     var b = $('submit'), label = 'Submit picks', ok = false;
     if (S.mode === 'open') {
-      ok = !!S.name && c === NEED && !S.saving;
+      ok = !!S.name && c > carriedN() && c <= NEED && !S.saving;
       if (S.saving) label = 'Saving…';
+      else if (c > carriedN() && c < NEED) label = 'Save ' + c + ' for now';
       else if (S.name && S.submitted[S.name]) label = 'Update picks';
     } else if (S.mode === 'preview') {
       label = S.why === 'upcoming' && S.opensAt ? 'Opens ' + fmt(S.opensAt, { weekday: 'short', hour: 'numeric' }) : 'Preview only';
@@ -494,7 +501,8 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     if (!S.done) { el.hidden = true; return; }
     var items = (S.done.picks || []).map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('');
     el.innerHTML = '<div class="done"><h2>You’re in, ' + esc(S.done.name) + '</h2>' +
-      '<p>' + NEED + ' picks saved ' + esc(when(S.done.at)) + ' CT. You can change a pick until that game kicks off.</p>' +
+      '<p>' + S.done.n + (S.done.n === 1 ? ' pick' : ' picks') + ' saved ' + esc(when(S.done.at)) + ' CT. You can change a pick until that game kicks off.' +
+      (S.done.n < NEED ? ' <b>You still need ' + (NEED - S.done.n) + ' more</b>; come back and add them before those games start.' : '') + '</p>' +
       '<ul>' + items + '</ul></div>';
     el.hidden = false;
   }
@@ -532,7 +540,8 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
       if (s.side) picks.push({ n: +n, pick: s.side });
       if (s.total) picks.push({ n: +n, pick: s.total });
     });
-    if (picks.length + carriedN() !== NEED) { toast('Pick ' + NEED + ' to submit. You have ' + (picks.length + carriedN()) + '.'); return; }
+    if (!picks.length) { toast('Pick at least one game to save.'); return; }
+    if (picks.length + carriedN() > NEED) { toast('That’s more than ' + NEED + ' picks. Drop one first.'); return; }
     S.saving = true; renderBar();
     fetch(S.api, {
       method: 'POST',
@@ -540,14 +549,15 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
       body: JSON.stringify({ action: 'submit', week: S.week, name: S.name, picks: picks })
     }).then(function (r) { return r.json(); }).then(function (res) {
       if (!res || !res.ok) throw new Error((res && res.error) || 'Your picks didn’t save. Try again.');
-      S.submitted[S.name] = res.at;
+      var total = res.n != null ? res.n : picks.length + carriedN();
+      S.submitted[S.name] = { at: res.at, n: total };
       save(selKey(S.name), S.sel);
-      S.done = { name: S.name, at: res.at, picks: res.picks || picks.map(function (p) {
+      S.done = { name: S.name, at: res.at, n: total, picks: res.picks || picks.map(function (p) {
         var g = gameByN(p.n); return pickText(g, p.pick === 'over' || p.pick === 'under' ? 'total' : 'side', p.pick);
       }) };
       renderNames(); renderDone();
       $('done').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      toast('Picks saved.');
+      toast(total < NEED ? total + ' of ' + NEED + ' saved. Come back for the rest.' : 'Picks saved.');
     }).catch(function (err) {
       var msg = err && err.message;
       toast(!msg || /fetch|network|json/i.test(msg) ? 'Your picks didn’t save. Check your connection and try again.' : msg);
