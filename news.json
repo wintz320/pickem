@@ -185,84 +185,84 @@
     "tag": "Storyline"
    },
    "NE@DET": {
-    "text": "The Patriots' last six games all went Over, but the last three Pats-Lions meetings all went Under. One streak dies in Munich.",
+    "text": "The Over is 6-0 in New England's last six games, while the Under is 3-0 in Detroit's last three. One streak dies in Munich.",
     "source": "https://www.si.com/betting/patriots-vs-lions-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-09",
     "tag": "Trend"
    },
    "BUF@NYJ": {
-    "text": "The Bills are 5-0 ATS in their last five against the Jets, who've given up 26+ points in four straight losses. Rough neighborhood.",
+    "text": "The Jets have lost four straight, allowing 26+ points in each. Buffalo is 5-0 against the spread in its last five vs. New York.",
     "source": "https://www.si.com/betting/bills-vs-jets-prediction-odds-spread-injuries-trends-for-nfl-week-10-01m71kvg2c1j",
     "published": "2026-11-10",
-    "tag": "Trend"
+    "tag": "Cold"
    },
    "CAR@NO": {
-    "text": "Chase Young has eight sacks in eight games and a sack in three straight. Carolina's QB may want to get rid of it early.",
+    "text": "Two 3-5 teams are tied atop the NFC South. The Saints have won five of the last six meetings. Somebody has to lead this division.",
     "source": "https://www.si.com/betting/panthers-vs-saints-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-10",
-    "tag": "Hot"
+    "tag": "Storyline"
    },
    "HOU@CLE": {
-    "text": "The Texans are 0-4 at home and 3-1 on the road. The Browns are 3-0 at home, winning every one as underdogs. Something's gotta give.",
+    "text": "Houston is 3-1 on the road and 0-4 at home. Cleveland is 3-0 at home. Somebody's home-field magic has to break.",
     "source": "https://www.si.com/betting/texans-vs-browns-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-10",
     "tag": "Trend"
    },
    "JAX@TEN": {
-    "text": "The 1-7 Titans still haven't won at home, and Jacksonville has won and covered four straight in this series.",
+    "text": "The Titans haven't won at home all season, and the Jaguars have covered four straight meetings. At least the tailgates are good.",
     "source": "https://www.si.com/betting/jaguars-vs-titans-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-10",
     "tag": "Trend"
    },
    "KC@ATL": {
-    "text": "Patrick Mahomes's elbow MRI showed no major injury, and he's expected to play. 92% of DraftKings bets are on KC. Falcons, take it personally.",
-    "source": "https://www.si.com/betting/positive-patrick-mahomes-injury-update-shifts-chiefs-vs-falcons-odds-in-nfl-week-10",
-    "published": "2026-11-09",
-    "tag": "Injury"
+    "text": "Bijan Robinson leads the NFL with 880 rushing yards, yet the Falcons are 1-4 at home. He can't carry the whole stadium too.",
+    "source": "https://www.si.com/betting/chiefs-vs-falcons-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
+    "published": "2026-11-10",
+    "tag": "Hot"
    },
    "MIA@IND": {
-    "text": "Malik Willis is on IR, so Kyle McCord lines up for his first start without a single NFL regular-season pass. Welcome to Indy, rook.",
-    "source": "https://www.si.com/nfl/dolphins/onsi/what-kyle-mccord-s-preseason-film-showed-ahead-of-his-first-dolphins-start-01m75gh8yg80",
-    "published": "2026-11-11",
-    "tag": "Injury"
+    "text": "Daniel Jones has thrown a pick in eight of nine games, including four straight. Dolphins defensive backs, bring your gloves.",
+    "source": "https://www.si.com/betting/dolphins-vs-colts-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
+    "published": "2026-11-10",
+    "tag": "Cold"
    },
    "MIN@GB": {
-    "text": "With Kyler Murray's hamstring strain, Minnesota traded for Kirk Cousins, who's likely to start at Lambeau. Only 34% of spread bets trust it.",
-    "source": "https://www.si.com/betting/kirk-cousins-trade-creates-massive-shift-in-vikings-vs-packers-odds-for-nfl-week-10",
-    "published": "2026-11-11",
+    "text": "Kyler Murray is out, so newly acquired Kirk Cousins starts at Lambeau. Green Bay is without Josh Jacobs and Micah Parsons.",
+    "source": "https://www.vikings.com/news/packers-injury-report-week-10-2026-nfl-season",
+    "published": "2026-11-13",
     "tag": "Injury"
    },
    "LA@ARI": {
-    "text": "Arizona is down to third-string QB Carson Beck for his first NFL start, and the Rams list Puka Nacua as doubtful. Buckle up.",
-    "source": "https://www.si.com/betting/rams-vs-cardinals-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
-    "published": "2026-11-10",
+    "text": "Rookie Carson Beck makes his first NFL start, and Arizona's active receivers have eight catches combined this season. No pressure, kid.",
+    "source": "https://www.espn.com/nfl/story/_/id/50455074/cardinals-start-rookie-qb-carson-beck-rams",
+    "published": "2026-11-11",
     "tag": "Injury"
    },
    "SEA@LV": {
-    "text": "Vegas shipped Kirk Cousins out, so Heisman winner Fernando Mendoza makes his first NFL start. The total promptly dropped from 43 to 40.5.",
-    "source": "https://www.si.com/betting/seahawks-vs-raiders-odds-make-major-shift-with-fernando-mendoza-set-to-make-first-career-start-01m73fnaj6ka",
-    "published": "2026-11-10",
-    "tag": "Injury"
+    "text": "No. 1 pick Fernando Mendoza's first start comes against a Seattle defense allowing a league-low 244.2 yards a game. Welcome to the NFL, rookie.",
+    "source": "https://www.cbssports.com/nfl/news/fernando-mendoza-makes-first-raiders-start-against-stingy-seahawks/",
+    "published": "2026-11-12",
+    "tag": "Storyline"
    },
    "SF@DAL": {
-    "text": "The 49ers have covered the last four meetings, and the Over has hit in six of nine Cowboys games. Bring snacks, not defense.",
+    "text": "The 49ers are 4-0 against the spread in the last four meetings, and Cowboys games are 6-3 to the Over. Defense optional in Arlington?",
     "source": "https://www.si.com/betting/49ers-vs-cowboys-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-10",
     "tag": "Trend"
    },
    "PIT@CIN": {
-    "text": "Both are 6-2 and the winner owns the AFC North. Joe Burrow leads all QBs with 23 TD passes. Pittsburgh's secondary is on notice.",
-    "source": "https://www.si.com/betting/steelers-vs-bengals-prediction-odds-spread-injuries-trends-for-nfl-week-10-01m7414skcz7",
+    "text": "Pittsburgh is 4-1 against the spread in its last five; Cincinnati has the NFL's top offense by EPA since Week 5. Something gives.",
+    "source": "https://www.covers.com/nfl/steelers-vs-bengals-prediction-picks-odds-early-leans-week-10-2026",
     "published": "2026-11-11",
     "tag": "Hot"
    },
    "LAC@BAL": {
-    "text": "The 0-8 Chargers are 0-7-1 against the spread, and the Ravens are 2-7 ATS. Somebody has to cover on Monday night. Probably.",
+    "text": "The Chargers are 0-8 and 0-7-1 against the spread. The Ravens are 2-7 ATS. Monday night's theme: covering is hard.",
     "source": "https://www.si.com/betting/chargers-vs-ravens-prediction-odds-spread-injuries-trends-for-nfl-week-10-01m741zk70e7",
     "published": "2026-11-11",
-    "tag": "Trend"
+    "tag": "Cold"
    }
   }
  },
- "updatedAt": "2026-11-11T15:16:37+00:00"
+ "updatedAt": "2026-11-14T15:13:57+00:00"
 }
