@@ -284,15 +284,6 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     return x.w + '-' + x.l + (x.t ? '-' + x.t : '');
   }
 
-  /* Fun display names (display only; picks are sent by game and side). */
-  var RENAME = { NYJ: 'Jet 2 Holiday' };
-  function renamed(gs) {
-    (gs || []).forEach(function (g) {
-      ['away', 'home'].forEach(function (r) { var t = g[r]; if (t && RENAME[t.abbr]) t.name = RENAME[t.abbr]; });
-    });
-    return gs;
-  }
-
   /* ---------- ESPN preview slate ---------- */
   function teamOf(c) {
     var t = (c && c.team) || {};
@@ -356,7 +347,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
         (s.submitted || []).forEach(function (x) { S.submitted[x.name] = { at: x.at, n: x.n == null ? NEED : x.n }; });
         S.carried = s.carried || {};
         if (s.status === 'open') {
-          S.mode = 'open'; S.week = s.week; S.games = renamed(s.games || []); S.lockedAt = s.lockedAt || null;
+          S.mode = 'open'; S.week = s.week; S.games = s.games || []; S.lockedAt = s.lockedAt || null;
           restore(); render(); return;
         }
         S.opensAt = s.opensAt || null;
@@ -367,7 +358,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   function startPreview(week, why) {
     S.mode = 'preview'; S.why = why;
     return previewSlate(week).then(function (r) {
-      S.week = r.week; S.games = renamed(r.games); restore(); render();
+      S.week = r.week; S.games = r.games; restore(); render();
     }).catch(function () { S.mode = 'error'; render(); });
   }
   function restore() {
