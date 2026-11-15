@@ -380,7 +380,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
     KC: ['Chiefs', 'Kansas City'], LV: ['Raiders', 'Las Vegas'], LAC: ['Chargers', 'LA Chargers'],
     LA: ['Rams', 'LA Rams'], MIA: ['Dolphins', 'Miami'], MIN: ['Vikings', 'Minnesota'],
     NE: ['Patriots', 'New England'], NO: ['Saints', 'New Orleans'], NYG: ['Giants', 'NY Giants'],
-    NYJ: ['Jets', 'NY Jets'], PHI: ['Eagles', 'Philadelphia'], PIT: ['Steelers', 'Pittsburgh'],
+    NYJ: ['Jet 2 Holiday', 'NY Jets'], PHI: ['Eagles', 'Philadelphia'], PIT: ['Steelers', 'Pittsburgh'],
     SF: ['49ers', 'San Francisco'], SEA: ['Seahawks', 'Seattle'], TB: ['Buccaneers', 'Tampa Bay'],
     TEN: ['Titans', 'Tennessee'], WAS: ['Commanders', 'Washington']
   };
@@ -391,6 +391,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
     NICK[(TEAMS[a][1] + ' ' + TEAMS[a][0]).toLowerCase()] = a;
   });
   NICK['niners'] = 'SF'; NICK['bucs'] = 'TB'; NICK['pats'] = 'NE'; NICK['jags'] = 'JAX';
+  NICK['jets'] = 'NYJ';
 
   function teamAbbr(name) {
     var n = String(name || '').trim().toLowerCase().replace(/\s+/g, ' ');
