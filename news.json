@@ -191,78 +191,78 @@
     "tag": "Trend"
    },
    "BUF@NYJ": {
-    "text": "Jet 2 Holiday has lost four straight, allowing 26+ points in each. Buffalo is 5-0 against the spread in its last five vs. New York.",
+    "text": "Jet 2 Holiday has allowed 26+ points in four straight losses, and Buffalo is 5-0 against the spread in the last five meetings. Rough neighborhood.",
     "source": "https://www.si.com/betting/bills-vs-jets-prediction-odds-spread-injuries-trends-for-nfl-week-10-01m71kvg2c1j",
     "published": "2026-11-10",
-    "tag": "Cold"
+    "tag": "Trend"
    },
    "CAR@NO": {
-    "text": "Two 3-5 teams are tied atop the NFC South. The Saints have won five of the last six meetings. Somebody has to lead this division.",
+    "text": "Saints DE Chase Young has eight sacks in eight games, second in the NFL. Panthers linemen, consider yourselves warned.",
     "source": "https://www.si.com/betting/panthers-vs-saints-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-10",
-    "tag": "Storyline"
+    "tag": "Hot"
    },
    "HOU@CLE": {
-    "text": "Houston is 3-1 on the road and 0-4 at home. Cleveland is 3-0 at home. Somebody's home-field magic has to break.",
+    "text": "The Texans are 0-4 at home but 3-1 on the road. Lucky for them, they're in Cleveland, where the Browns are 3-0.",
     "source": "https://www.si.com/betting/texans-vs-browns-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-10",
     "tag": "Trend"
    },
    "JAX@TEN": {
-    "text": "The Titans haven't won at home all season, and the Jaguars have covered four straight meetings. At least the tailgates are good.",
+    "text": "Trevor Lawrence threw for 484 yards and five TDs in two games against the Titans last season. The 1-7 Titans remember.",
     "source": "https://www.si.com/betting/jaguars-vs-titans-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-10",
-    "tag": "Trend"
+    "tag": "Storyline"
    },
    "KC@ATL": {
-    "text": "Bijan Robinson leads the NFL with 880 rushing yards, yet the Falcons are 1-4 at home. He can't carry the whole stadium too.",
+    "text": "Bijan Robinson leads the NFL with 880 rushing yards, which is about the only thing the 3-6 Falcons are leading.",
     "source": "https://www.si.com/betting/chiefs-vs-falcons-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-10",
     "tag": "Hot"
    },
    "MIA@IND": {
-    "text": "Daniel Jones has thrown a pick in eight of nine games, including four straight. Dolphins defensive backs, bring your gloves.",
+    "text": "Daniel Jones has thrown an interception in eight of nine games, including four straight. Dolphins DBs, bring your gloves.",
     "source": "https://www.si.com/betting/dolphins-vs-colts-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
     "published": "2026-11-10",
     "tag": "Cold"
    },
    "MIN@GB": {
-    "text": "Kyler Murray is out, so newly acquired Kirk Cousins starts at Lambeau. Green Bay is without Josh Jacobs and Micah Parsons.",
-    "source": "https://www.vikings.com/news/packers-injury-report-week-10-2026-nfl-season",
-    "published": "2026-11-13",
+    "text": "Kyler Murray (hamstring) remains week-to-week, so Kirk Cousins starts at Lambeau. Packers fans know that face.",
+    "source": "https://www.thefantasyfootballers.com/news/647148/kyler-murray-remains-week-to-week/",
+    "published": "2026-11-11",
     "tag": "Injury"
    },
    "LA@ARI": {
-    "text": "Rookie Carson Beck makes his first NFL start, and Arizona's active receivers have eight catches combined this season. No pressure, kid.",
-    "source": "https://www.espn.com/nfl/story/_/id/50455074/cardinals-start-rookie-qb-carson-beck-rams",
-    "published": "2026-11-11",
+    "text": "With Gardner Minshew doubtful, Carson Beck gets his first NFL start. The Rams' Puka Nacua is listed as doubtful.",
+    "source": "https://www.si.com/betting/rams-vs-cardinals-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
+    "published": "2026-11-10",
     "tag": "Injury"
    },
    "SEA@LV": {
-    "text": "No. 1 pick Fernando Mendoza's first start comes against a Seattle defense allowing a league-low 244.2 yards a game. Welcome to the NFL, rookie.",
-    "source": "https://www.cbssports.com/nfl/news/fernando-mendoza-makes-first-raiders-start-against-stingy-seahawks/",
-    "published": "2026-11-12",
-    "tag": "Storyline"
+    "text": "Heisman winner Fernando Mendoza makes his first NFL start for the Raiders, while Seattle stays without Sam Darnold. Rookie welcome party, Vegas style.",
+    "source": "https://www.si.com/betting/seahawks-vs-raiders-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
+    "published": "2026-11-10",
+    "tag": "Injury"
    },
    "SF@DAL": {
-    "text": "The 49ers are 4-0 against the spread in the last four meetings, and Cowboys games are 6-3 to the Over. Defense optional in Arlington?",
-    "source": "https://www.si.com/betting/49ers-vs-cowboys-prediction-odds-spread-injuries-trends-for-nfl-week-10-2026",
-    "published": "2026-11-10",
-    "tag": "Trend"
-   },
-   "PIT@CIN": {
-    "text": "Pittsburgh is 4-1 against the spread in its last five; Cincinnati has the NFL's top offense by EPA since Week 5. Something gives.",
-    "source": "https://www.covers.com/nfl/steelers-vs-bengals-prediction-picks-odds-early-leans-week-10-2026",
+    "text": "CeeDee Lamb dropped 195 receiving yards last week. Brock Purdy has a TD pass in eight straight. Defense is optional.",
+    "source": "https://www.yardbarker.com/nfl/articles/49ers_vs_cowboys_in_week_10_preview_plus_odds/s1_17111_44547215",
     "published": "2026-11-11",
     "tag": "Hot"
    },
+   "PIT@CIN": {
+    "text": "Both teams are 6-2 riding four-game win streaks, with the AFC North lead on the line. Pittsburgh won the first one 30-27.",
+    "source": "https://www.nbcsportsbayarea.com/nfl/steelers-bengals-sunday-night-football-week-10-how-to-watch-nbc-peacock/1976670/",
+    "published": "2026-11-10",
+    "tag": "Storyline"
+   },
    "LAC@BAL": {
-    "text": "The Chargers are 0-8 and 0-7-1 against the spread. The Ravens are 2-7 ATS. Monday night's theme: covering is hard.",
+    "text": "The 0-8 Chargers are 0-7-1 against the spread. The Ravens are 2-7 ATS and without Lamar Jackson (IR). Something has to give.",
     "source": "https://www.si.com/betting/chargers-vs-ravens-prediction-odds-spread-injuries-trends-for-nfl-week-10-01m741zk70e7",
     "published": "2026-11-11",
-    "tag": "Cold"
+    "tag": "Trend"
    }
   }
  },
- "updatedAt": "2026-11-14T15:13:57+00:00"
+ "updatedAt": "2026-11-15T15:13:25+00:00"
 }
