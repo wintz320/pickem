@@ -186,78 +186,78 @@
     "tag": "Trend"
    },
    "ARI@KC": {
-    "text": "Arizona hasn't scored a TD since opening November in Dallas. Patrick Mahomes has 10 TD passes and zero picks in his last three games.",
-    "source": "https://www.si.com/betting/cardinals-vs-chiefs-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
-    "tag": "Cold"
+    "text": "Carson Beck is out, so 40-year-old Josh Johnson starts for Arizona, his 15th NFL team. Arrowhead awaits.",
+    "source": "https://www.tsn.ca/nfl/article/cardinals-rule-out-rookie-beck-turn-to-40-year-old-johnson-vs-chiefs-n1-50553035/",
+    "published": "2026-11-21",
+    "tag": "Injury"
    },
    "BAL@CAR": {
-    "text": "Lamar Jackson is on IR, and the Ravens are a wallet-draining 2-8 against the spread this season.",
-    "source": "https://www.si.com/betting/ravens-vs-panthers-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
+    "text": "Lamar Jackson is out and Jacoby Brissett starts: four different Ravens QBs in four games. Baltimore has lost five straight.",
+    "source": "https://www.panthers.com/news/know-your-foe-week-11-baltimore-ravens-carolina-panthers",
+    "published": "2026-11-18",
     "tag": "Injury"
    },
    "JAX@NYG": {
-    "text": "The Giants are 5-3-1 without facing a team currently in a playoff spot. Enter the 7-2 Jaguars.",
-    "source": "https://www.si.com/betting/jaguars-vs-giants-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
+    "text": "The Giants haven't beaten Jacksonville at home since 2010. Trevor Lawrence and the 7-2 Jaguars would love to keep that going.",
+    "source": "https://www.giants.com/news/jacksonville-jaguars-week-11-john-harbaugh-jj-mccarthy-malachi-fields-arvell-reese-trevor-lawrence",
+    "published": "2026-11-20",
     "tag": "Storyline"
    },
    "MIA@BUF": {
-    "text": "Miami's only win this season came against the Jets. Now the 1-8 Dolphins visit an 8-1 Bills team that's 7-2 against the spread.",
-    "source": "https://www.si.com/betting/dolphins-vs-bills-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
-    "tag": "Trend"
-   },
-   "NO@CHI": {
-    "text": "Caleb Williams threw four interceptions last time out. The Saints' defense would love an encore after the Bears' bye week.",
-    "source": "https://www.si.com/betting/saints-vs-bears-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
-    "tag": "Cold"
-   },
-   "TB@DET": {
-    "text": "Jahmyr Gibbs piled up 252 scrimmage yards in Germany and became the first RB to 1,000 yards. The rested Bucs get the next shift.",
-    "source": "https://www.si.com/betting/buccaneers-vs-lions-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
+    "text": "Kyle McCord is the fourth straight backup QB to face Buffalo, whose defense has allowed 28 points total in its last three games.",
+    "source": "https://www.buffalobills.com/news/top-storylines-for-bills-vs-dolphins-week-11",
+    "published": "2026-11-18",
     "tag": "Hot"
    },
+   "NO@CHI": {
+    "text": "The Bears scored 27+ in four straight wins with Caleb Williams, and now Kyle Monangai is back after missing five games. Good luck, Saints.",
+    "source": "https://www.chicagobears.com/news/bears-saints-game-preview-2026-week-11",
+    "published": "2026-11-21",
+    "tag": "Hot"
+   },
+   "TB@DET": {
+    "text": "Baker Mayfield (foot) will play against the Lions after a questionable week, per Ian Rapoport. The Bucs' gunslinger is back in the saddle.",
+    "source": "https://www.nbcsports.com/fantasy/football/player-news/2026-11-22/rapoport-mayfield-foot-will-play-vs-the-lions",
+    "published": "2026-11-22",
+    "tag": "Injury"
+   },
    "TEN@DAL": {
-    "text": "Dallas allows 28.2 points a game, Tennessee 26.6. Both defenses rank bottom six, which explains that 54.5 total.",
-    "source": "https://www.si.com/betting/titans-vs-cowboys-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
-    "tag": "Trend"
-   },
-   "NYJ@LAC": {
-    "text": "The Chargers are 1-8 against the spread, and the Jets' red zone offense ranks dead last. Somebody has to cover.",
-    "source": "https://www.si.com/betting/jets-vs-chargers-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
-    "tag": "Trend"
-   },
-   "LV@DEN": {
-    "text": "The Raiders are 8-2 against the spread in the last 10 meetings with Denver. The 7-2 Broncos are fresh off a bye anyway.",
-    "source": "https://www.si.com/betting/raiders-vs-broncos-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
-    "tag": "Trend"
-   },
-   "PIT@PHI": {
-    "text": "The Eagles have lost seven straight and are 1-8 against the spread. The Linc could use some good news.",
-    "source": "https://www.si.com/betting/steelers-vs-eagles-prediction-odds-spread-injuries-trends-for-nfl-week-11-2026",
-    "published": "2026-11-17",
+    "text": "Dallas gave up 584 yards to the 49ers and handed defensive play-calling to Mike Pettine. The Titans have averaged 27.3 points over four games.",
+    "source": "https://fieldlevelmedia.com/?p=504285",
+    "published": "2026-11-19",
     "tag": "Cold"
    },
-   "MIN@SF": {
-    "text": "The UNDER is 8-1 in Vikings games this season. Kirk Cousins and Minnesota take that snooze act to Mexico City.",
-    "source": "https://www.si.com/betting/vikings-vs-49ers-prediction-odds-spread-injuries-trends-for-nfl-week-11-01m7ntgdmjem",
+   "NYJ@LAC": {
+    "text": "Geno Smith plans to play through his ankle injury. The Jets offense has gone nine straight quarters without a touchdown, so no pressure.",
+    "source": "https://www.tsn.ca/nfl/article/jets-qb-smith-ankle-intends-to-play-vs-chargers-thats-the-plan-n1-50523800/",
     "published": "2026-11-18",
-    "tag": "Trend"
+    "tag": "Cold"
    },
-   "CIN@WAS": {
-    "text": "Joe Burrow is completing 74.7% of his passes, yet Washington has won the last three meetings with Cincinnati.",
-    "source": "https://www.si.com/betting/bengals-vs-commanders-prediction-odds-spread-injuries-trends-for-nfl-week-11-01m7nvacnem9",
+   "LV@DEN": {
+    "text": "Fernando Mendoza was sacked six times in his first start. Next up: a Denver defense with 26 sacks and a five-game win streak.",
+    "source": "https://www.raiders.com/news/game-preview-fernando-mendoza-raiders-face-another-stiff-test-against-potent-broncos-defense",
     "published": "2026-11-18",
     "tag": "Storyline"
+   },
+   "PIT@PHI": {
+    "text": "Joe Milton starts for an Eagles team on a seven-game losing streak. Aaron Rodgers and the Steelers roll into the Linc as road favorites.",
+    "source": "https://clutchpoints.com/nfl/nfl-stories/steelers-vs-eagles-bold-predictions-for-nfl-week-11",
+    "published": "2026-11-17",
+    "tag": "Injury"
+   },
+   "MIN@SF": {
+    "text": "Minnesota allows a league-low 14 points a game. San Francisco scores TDs on 82.8% of red-zone trips. Something has to give in Mexico City.",
+    "source": "https://www.lanacion.com.ar/usa/vikings-49ers-matchup-in-mexico-features-the-best-defense-vs-the-best-offense-nid19112026/",
+    "published": "2026-11-19",
+    "tag": "Storyline"
+   },
+   "CIN@WAS": {
+    "text": "Vegas pushed MVP favorite Joe Burrow and the Bengals from 3.5-point favorites to 6.5, and the total climbed too. Washington, you've been warned.",
+    "source": "https://www.si.com/betting/bengals-vs-commanders-odds-for-nfl-week-11-total-rising-ahead-of-monday-night-football",
+    "published": "2026-11-19",
+    "tag": "Trend"
    }
   }
  },
- "updatedAt": "2026-11-21T15:12:39+00:00"
+ "updatedAt": "2026-11-22T15:17:07+00:00"
 }
