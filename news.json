@@ -1,97 +1,5 @@
 {
  "weeks": {
-  "9": {
-   "JAX@BAL": {
-    "text": "Lamar Jackson is out and third-stringer Joe Fagnano starts. Vegas noticed: Baltimore went from lookahead favorite to a 10-point home dog.",
-    "source": "https://www.si.com/betting/jaguars-vs-ravens-odds-continue-to-shift-towards-jacksonville-with-joe-fagnano-set-to-start-in-nfl-week-9",
-    "published": "2026-11-04",
-    "tag": "Injury"
-   },
-   "CIN@ATL": {
-    "text": "Joe Burrow leads the NFL at 302.1 passing yards a game. Michael Penix Jr. ranks 32nd of 35 starters in completion % over expected. Olé.",
-    "source": "https://www.si.com/betting/bengals-vs-falcons-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-02",
-    "tag": "Hot"
-   },
-   "CLE@NO": {
-    "text": "The 2-5 Saints have yet to win a home game this season, and Vegas still has them favored over the 5-3 Browns.",
-    "source": "https://www.si.com/betting/browns-vs-saints-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-03",
-    "tag": "Storyline"
-   },
-   "DAL@IND": {
-    "text": "The Colts have lost four straight, including a 42-7 beatdown in Jacksonville. Dallas has dropped three of four. Somebody has to win this.",
-    "source": "https://www.si.com/betting/cowboys-vs-colts-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-03",
-    "tag": "Cold"
-   },
-   "DEN@CAR": {
-    "text": "The Broncos are 4-0 against the spread as favorites. Carolina's run defense ranks 28th in yards per carry allowed. Yikes.",
-    "source": "https://www.si.com/betting/broncos-vs-panthers-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-03",
-    "tag": "Trend"
-   },
-   "DET@MIA": {
-    "text": "The 1-6 Dolphins are 0-3 at home, and Jahmyr Gibbs just ran for 153 yards. Hard Rock, meet hard running.",
-    "source": "https://www.si.com/betting/lions-vs-dolphins-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-03",
-    "tag": "Cold"
-   },
-   "LA@WAS": {
-    "text": "The Rams are 7-3 ATS in their last 10 against Washington, which ranks 31st in opponent rush success rate and has Terry McLaurin on IR.",
-    "source": "https://www.si.com/betting/rams-vs-commanders-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-03",
-    "tag": "Trend"
-   },
-   "NYG@PHI": {
-    "text": "Joe Milton III becomes the Eagles' third starting QB this season with Jalen Hurts on IR. Philly has lost six straight, so no pressure, Joe.",
-    "source": "https://tsn.ca/nfl/article/report-slumping-eagles-turn-to-milton-as-starting-qb-vs-giants-n1-50380724/",
-    "published": "2026-11-04",
-    "tag": "Injury"
-   },
-   "NYJ@KC": {
-    "text": "The Chiefs were 5-0 a few weeks ago; now they've lost two straight, with Kenneth Walker averaging 2.6 and 3.3 yards per carry in them.",
-    "source": "https://www.si.com/betting/jets-vs-chiefs-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-03",
-    "tag": "Cold"
-   },
-   "HOU@LAC": {
-    "text": "The Chargers are 0-7 straight up and 0-6-1 against the spread. Not a single cover all year. Impressive, in its own way.",
-    "source": "https://www.si.com/betting/texans-vs-chargers-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-03",
-    "tag": "Cold"
-   },
-   "LV@SF": {
-    "text": "Kirk Cousins has 19 TD passes and the Raiders are 6-2 against the spread. Yes, those Raiders.",
-    "source": "https://www.si.com/betting/raiders-vs-49ers-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-03",
-    "tag": "Hot"
-   },
-   "ARI@SEA": {
-    "text": "Sam Darnold is out (quad), so Drew Lock likely starts. Lock threw three TD passes at Arizona in Week 2. The Cards remember.",
-    "source": "https://www.nfl.com/news/seahawks-qb-sam-darnold-out-week-9-cardinals-quad-injury",
-    "published": "2026-11-04",
-    "tag": "Injury"
-   },
-   "GB@NE": {
-    "text": "The Under is 5-0 in Green Bay's last five games. The Over is 5-0 in New England's last five. Something has to give.",
-    "source": "https://www.si.com/betting/packers-vs-patriots-prediction-odds-spread-injuries-trends-for-nfl-week-9-2026",
-    "published": "2026-11-03",
-    "tag": "Trend"
-   },
-   "TB@CHI": {
-    "text": "The Bucs blanked Atlanta 16-0 without completing a single pass. Bucky Irving's 728 rushing yards: apparently all you need.",
-    "source": "https://www.si.com/betting/buccaneers-vs-bears-prediction-odds-spread-injuries-trends-for-nfl-week-9-01m6hsqswvbd",
-    "published": "2026-11-04",
-    "tag": "Hot"
-   },
-   "BUF@MIN": {
-    "text": "Kyler Murray is out with a hamstring strain, so Carson Wentz starts for the 6-1 Vikings, and the line slid toward Buffalo. Bring it, Carson.",
-    "source": "https://www.si.com/betting/bills-vs-vikings-odds-shift-with-carson-wentz-set-to-start-for-injured-kyler-murray-on-monday",
-    "published": "2026-11-05",
-    "tag": "Injury"
-   }
-  },
   "10": {
    "WAS@NYG": {
     "text": "Round one ended in a tie because Washington ran out of clock in overtime. Meanwhile, the Giants have covered six of eight.",
@@ -257,7 +165,105 @@
     "published": "2026-11-19",
     "tag": "Trend"
    }
+  },
+  "12": {
+   "GB@LA": {
+    "text": "Puka Nacua is out for the season, yet Blake Corum has scored in six straight games and the Rams ride a four-game win streak.",
+    "source": "https://www.si.com/betting/packers-vs-rams-prediction-odds-spread-injuries-trends-for-nfl-week-12-2026",
+    "published": "2026-11-23",
+    "tag": "Hot"
+   },
+   "CHI@DET": {
+    "text": "Detroit plays without Aidan Hutchinson and Jack Campbell (both on IR), and the Lions are 38-46-2 all-time on Thanksgiving. Pass the gravy.",
+    "source": "https://www.si.com/betting/bears-vs-lions-prediction-odds-spread-injuries-trends-for-thanksgiving-day-in-nfl-week-12-2026",
+    "published": "2026-11-23",
+    "tag": "Injury"
+   },
+   "PHI@DAL": {
+    "text": "Jalen Hurts is on IR, so Joe Milton starts for an Eagles team that's 2-8 against the spread. Dak has nine TDs in two weeks.",
+    "source": "https://www.si.com/betting/eagles-vs-cowboys-prediction-odds-spread-injuries-trends-for-thanksgiving-day-in-nfl-week-12-2026",
+    "published": "2026-11-23",
+    "tag": "Injury"
+   },
+   "KC@BUF": {
+    "text": "Mahomes and Allen are 5-5 head-to-head, and Patrick Mahomes is 13-4-1 against the spread as an underdog. Turkey-night tiebreaker.",
+    "source": "https://www.si.com/betting/chiefs-vs-bills-prediction-odds-spread-injuries-trends-for-thanksgiving-night-in-nfl-week-12-2026",
+    "published": "2026-11-23",
+    "tag": "Trend"
+   },
+   "DEN@PIT": {
+    "text": "The Broncos have won 16 straight one-possession games. Steelers, maybe try a different kind of game.",
+    "source": "https://www.si.com/betting/broncos-vs-steelers-opening-odds-for-black-friday-game-in-nfl-week-12-denver-favored-on-the-road",
+    "published": "2026-11-23",
+    "tag": "Storyline"
+   },
+   "ATL@MIN": {
+    "text": "The under is 9-1 in Vikings games this season. Pack a snack, folks, the scoreboard operator sure is.",
+    "source": "https://www.si.com/betting/falcons-vs-vikings-prediction-odds-spread-injuries-trends-for-nfl-week-12-2026",
+    "published": "2026-11-24",
+    "tag": "Trend"
+   },
+   "BAL@HOU": {
+    "text": "Lamar Jackson is on IR and the Ravens are 3-8 against the spread. Meanwhile, C.J. Stroud has 3+ TD passes in three straight.",
+    "source": "https://www.si.com/betting/ravens-vs-texans-prediction-odds-spread-injuries-trends-for-nfl-week-12-01m85jp47wh1",
+    "published": "2026-11-24",
+    "tag": "Injury"
+   },
+   "NO@CIN": {
+    "text": "Joe Burrow has 29 TD passes and still slipped to No. 2 in MVP odds behind Brock Purdy. The Saints draw a grumpy QB.",
+    "source": "https://www.si.com/betting/saints-vs-bengals-prediction-odds-spread-injuries-trends-for-nfl-week-12-2026",
+    "published": "2026-11-24",
+    "tag": "Hot"
+   },
+   "NYG@IND": {
+    "text": "Anthony Richardson Sr. makes his first start since 2024 after the Colts cut Daniel Jones. Fresh keys, 6.5-point home dog.",
+    "source": "https://www.nbcsports.com/fantasy/football/player-news/2026-11-20/anthony-richardson-will-start-for-colts-vs-giants",
+    "published": "2026-11-20",
+    "tag": "Injury"
+   },
+   "NYJ@MIA": {
+    "text": "With Malik Willis on IR, Kyle McCord is poised to start. Last week he went 12-for-33 for 102 yards. Jets defense, stretch out.",
+    "source": "https://www.cbssports.com/fantasy/football/news/dolphins-kyle-mccord-dreadful-in-loss-to-bills/",
+    "published": "2026-11-22",
+    "tag": "Injury"
+   },
+   "TEN@JAX": {
+    "text": "The Titans have allowed 40-plus points three straight games. Next stop: a Jaguars team favored by 14.5.",
+    "source": "https://www.tennesseetitans.com/news/titans-can-t-slow-down-cowboys-lose-51-23-to-drop-to-1-9",
+    "published": "2026-11-22",
+    "tag": "Cold"
+   },
+   "NE@LAC": {
+    "text": "Drake Maye is out, so Tommy DeVito starts. The line shrank from 4.5 to 1.5, but the 1-9 Chargers are somehow still favored.",
+    "source": "https://bettorsinsider.com/nfl/2026/11/23/patriots-qb-drake-maye-fractures-fibula-devito-starts-vs-chargers-as-spread-drops/",
+    "published": "2026-11-23",
+    "tag": "Injury"
+   },
+   "SEA@SF": {
+    "text": "The 9-1 49ers already beat Seattle 32-29 and can sweep. Sam Darnold is questionable. Defending champs, no pressure.",
+    "source": "https://www.si.com/betting/seahawks-vs-49ers-prediction-odds-spread-injuries-trends-for-nfl-week-12-2026",
+    "published": "2026-11-24",
+    "tag": "Storyline"
+   },
+   "WAS@ARI": {
+    "text": "The Cardinals lost their last two games by a combined 68-13. The Commanders would like a word, and a third straight win.",
+    "source": "https://www.si.com/betting/commanders-vs-cardinals-prediction-odds-spread-injuries-trends-for-nfl-week-12-2026",
+    "published": "2026-11-24",
+    "tag": "Cold"
+   },
+   "LV@CLE": {
+    "text": "The Browns are favored by 4.5 but haven't won a game by more than four all season. Math is hard on Sunday night.",
+    "source": "https://www.si.com/betting/raiders-vs-browns-prediction-odds-spread-injuries-trends-for-nfl-week-12-01m87wmzgpt1",
+    "published": "2026-11-25",
+    "tag": "Trend"
+   },
+   "CAR@TB": {
+    "text": "The 5-5 Panthers lead the NFC South by two games and are still underdogs to the 3-7 Bucs. Revenge Monday, anyone?",
+    "source": "https://www.si.com/nfl/panthers/onsi/nfl-week-12-odds-paint-picture-panthers-revenge-chances-buccaneers",
+    "published": "2026-11-25",
+    "tag": "Storyline"
+   }
   }
  },
- "updatedAt": "2026-11-22T15:17:07+00:00"
+ "updatedAt": "2026-11-25T15:19:46+00:00"
 }
