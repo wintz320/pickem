@@ -536,8 +536,10 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
         if (i === 0 && /timestamp/i.test(r[0] || '')) return;
         var name = cleanName(r[1]);
         if (!name || !String(r[2] || '').trim()) return;
-        var hidden = String(r[2]).trim() === 'HIDDEN';
-        parsed.push({ at: r[0], ts: stamp(r[0]), rawName: name, picks: hidden ? [] : parsePicks(r[2]), hidden: hidden, tab: title });
+        // "HIDDEN" = all picks held back; "<picks>, HIDDEN 6" = picks on games under way, 6 still held back
+        var cell = String(r[2]).trim(), hm = cell.match(/(?:^|,\s*)HIDDEN(?:\s+\d+)?\s*$/);
+        var hidden = !!hm, shown = hm ? cell.slice(0, hm.index) : cell;
+        parsed.push({ at: r[0], ts: stamp(r[0]), rawName: name, picks: parsePicks(shown), hidden: hidden, tab: title });
       });
       if (!parsed.length) return;
       // which NFL week does this tab belong to? match side picks to the schedule
@@ -752,7 +754,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
   }
   function gameNotes(w) {
     if (!news) return '';
-    var gs = (data.games || []).filter(function (g) { return g.week === w.week && g.awayScore == null && newsFor(g); })
+    var gs = (data.games || []).filter(function (g) { return g.week === w.week && g.awayScore == null && !underway(g) && newsFor(g); })
       .sort(function (a, b) { return kickoffAt(a) - kickoffAt(b); });
     if (!gs.length) return '';
     return '<h3 class="notes-h">Game news</h3><ul class="notes">' + gs.map(function (g) {
@@ -837,7 +839,11 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
   }
   function underway(g) { var k = kickoffAt(g); return k && Date.now() >= k; }
   function whenText(g) { return underway(g) ? 'Under way, waiting on the final' : kickoff(g); }
-  var LOCK_NOTE = 'Picks stay hidden until noon Sunday (Central), when they all show up here.';
+  var LOCK_NOTE = 'Picks on each game show up here once it kicks off. The rest stay hidden until noon Sunday (Central).';
+  function underWay(w) {
+    if (!Object.keys(w.games).length) return '';
+    return '<h3 class="notes-h">Games under way</h3>' + stillToPlay(w, 0, true);
+  }
   function lockNote(w) {
     return Date.now() >= revealAt(w) ? 'Picks unlock at noon Sunday and will show up here within a few minutes.' : LOCK_NOTE;
   }
@@ -914,13 +920,13 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
     return bits.join(' \u00b7 ');
   }
 
-  function stillToPlay(w, limit) {
+  function stillToPlay(w, limit, withFinals) {
     var nums = Object.keys(w.games).map(Number).sort(function (a, b) { return a - b; })
-      .filter(function (n) { return w.gameState[n] !== 'final'; });
+      .filter(function (n) { return withFinals || w.gameState[n] !== 'final'; });
     if (!nums.length) return '';
     var html = '<ul class="games">';
     nums.slice(0, limit || nums.length).forEach(function (n) {
-      var g = w.games[n], L = w.gameState[n] === 'live' ? liveInfo(g) : null;
+      var g = w.games[n], L = w.gameState[n] === 'live' ? liveInfo(g) : null, F = w.gameState[n] === 'final';
       var groups = {};
       w.entries.forEach(function (e) {
         e.picks.forEach(function (p) {
@@ -934,13 +940,14 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
         .sort(function (a, b) { return b.names.length - a.names.length || a.label.localeCompare(b.label); });
       html += '<li class="game"><div class="game-head"><span class="game-name">' + esc(matchup(g)) + '</span>' +
         (L ? '<span class="game-when is-live">Live \u00b7 ' + esc([L.period, L.clock].filter(Boolean).join(' ')) + '</span>'
-           : '<span class="game-when">' + esc(whenText(g)) + '</span>') + '</div>';
-      if (L) html += '<div class="scoreline">' + esc(scoreText(g, L)) + '</div>';
+           : '<span class="game-when">' + esc(F ? 'Final' : whenText(g)) + '</span>') + '</div>';
+      if (L || F) html += '<div class="scoreline">' + esc(scoreText(g, L)) + '</div>';
       if (gl.length) {
         html += '<ul class="splits">';
         gl.forEach(function (grp) {
-          var cls = L ? ' now-' + grp.p.res : '';
-          var tag = L ? '<span class="split-state">' + (grp.p.res === 'W' ? 'winning' : grp.p.res === 'L' ? 'losing' : 'push') + '</span>' : '';
+          var cls = L || F ? ' now-' + grp.p.res : '';
+          var tag = L ? '<span class="split-state">' + (grp.p.res === 'W' ? 'winning' : grp.p.res === 'L' ? 'losing' : 'push') + '</span>'
+            : F ? '<span class="split-state">' + (grp.p.res === 'W' ? 'won' : grp.p.res === 'L' ? 'lost' : 'push') + '</span>' : '';
           html += '<li class="split' + cls + '"><span class="split-pick">' + esc(grp.label) + tag + '</span>' +
             '<span class="split-n">' + grp.names.length + '</span>' +
             '<span class="split-who">' + esc(grp.names.join(', ')) + '</span></li>';
@@ -982,7 +989,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
         '<div class="now-head"><h2 id="now-h">Week ' + w.week + '</h2><span class="chip">Picks coming in</span></div>' +
         '<p class="now-lead">' + esc(plural(w.entries.length, 'entry', 'entries') + ' in so far: ' +
           listNames(w.entries.map(function (e) { return model.players[e.pid]; }))) + '.</p>' +
-        '<p class="note" style="margin:0 0 12px">' + esc(lockNote(w)) + '</p>' + gameNotes(w) + '</section>';
+        '<p class="note" style="margin:0 0 12px">' + esc(lockNote(w)) + '</p>' + underWay(w) + gameNotes(w) + '</section>';
     } else if (w) {
       h += '<section class="sheet now" aria-labelledby="now-h">' +
         '<div class="now-head"><h2 id="now-h">Week ' + w.week + '</h2>' +
@@ -1062,7 +1069,7 @@ footer p { margin: 0 0 8px; max-width: 66ch; }
         '<div class="week-meta"><span>' + esc(dateRange(w.firstDate, w.lastDate)) + '</span><span>' +
         plural(w.entries.length, 'entry', 'entries') + ' in</span></div>' +
         '<p class="now-lead">' + esc(lockNote(w)) + '</p></section>' +
-        (gameNotes(w) ? '<section class="sheet now">' + gameNotes(w) + '</section>' : '') +
+        (underWay(w) || gameNotes(w) ? '<section class="sheet now">' + underWay(w) + gameNotes(w) + '</section>' : '') +
         '<section><ol class="sheet board">';
       w.entries.slice().sort(function (a, b) { return a.ts - b.ts; }).forEach(function (e) {
         lh += '<li><div class="entry-btn board-head" style="text-transform:none;letter-spacing:0;font-size:14px">' +

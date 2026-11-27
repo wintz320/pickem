@@ -10,7 +10,8 @@ Inputs (fetched fresh on every run):
     reads this copy when ESPN turns Google's servers away
 The page grades every pick itself; this script only gathers raw inputs.
 
-Each week's picks are kept out of the public data until noon Sunday (Central) of that week.
+Each week's picks are kept out of the public data until noon Sunday (Central) of that week, except
+that picks on a game show up once that game has kicked off (the rest of the cell reads "HIDDEN n").
 If a source can't be reached, the last good copy of that input is kept.
 
 For local testing, point at files instead of the network:
@@ -250,6 +251,33 @@ def reveal_time(week_games):
     return dt.datetime(d.year, d.month, d.day, 12, 0, tzinfo=CT)
 
 
+def kickoff_utc(g):
+    t = dt.datetime.fromisoformat("%sT%s" % (g["date"], g.get("timeET") or "00:00"))
+    return t.replace(tzinfo=ZoneInfo("America/New_York")).astimezone(dt.timezone.utc)
+
+
+def partial_cell(cell, week_games, now):
+    """Keep only the picks on games that have kicked off; count the rest as hidden.
+
+    G numbers on the pick sheet follow kickoff order (the sheet script sorts ESPN's games by kickoff),
+    so the nth game by kickoff has the kickoff time of G n even when several games share a slot."""
+    text = str(cell or "").strip()
+    if not text:
+        return ""
+    kicks = sorted(kickoff_utc(g) for g in week_games)
+    shown, hidden = [], 0
+    for chunk in re.split(r",\s*(?=G\s*\d+\s*\|)", text):
+        m = re.match(r"\s*G\s*(\d+)\s*\|", chunk)
+        n = int(m.group(1)) if m else 0
+        if 1 <= n <= len(kicks) and kicks[n - 1] <= now:
+            shown.append(chunk.strip())
+        else:
+            hidden += 1
+    if not shown:
+        return "HIDDEN"
+    return ", ".join(shown) + (", HIDDEN %d" % hidden if hidden else "")
+
+
 def main():
     now = dt.datetime.fromisoformat(os.environ["PICKEM_NOW"]) if os.environ.get("PICKEM_NOW") \
         else dt.datetime.now(dt.timezone.utc)
@@ -307,7 +335,11 @@ def main():
         tab_weeks[title] = wk
         reveal = reveal_time(by_week.get(wk, []))
         if reveal and now < reveal:
-            public_tabs[title] = [rows[0]] + [[r[0], r[1], "HIDDEN" if (r[2] or "").strip() else ""] for r in rows[1:]]
+            if named:  # pick-page tabs: show picks on games already under way
+                hide = lambda c: partial_cell(c, by_week.get(wk, []), now)
+            else:
+                hide = lambda c: "HIDDEN" if str(c or "").strip() else ""
+            public_tabs[title] = [rows[0]] + [[r[0], r[1], hide(r[2] if len(r) > 2 else "")] for r in rows[1:]]
             withheld.append(title)
         else:
             public_tabs[title] = rows
