@@ -57,7 +57,7 @@
 body {
   margin: 0; background: var(--paper); color: var(--ink);
   font-family: var(--body); font-size: 15px; line-height: 1.45; -webkit-text-size-adjust: 100%;
-  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(116px + env(safe-area-inset-bottom, 0px));
 }
 [hidden] { display: none !important; }
 .wrap {
@@ -169,6 +169,9 @@ h2 {
 .meter { display: grid; grid-template-columns: repeat(15, 1fr); gap: 2px; width: 150px; max-width: 40vw; }
 .meter i { height: 5px; border-radius: 2px; background: var(--rule); }
 .meter i.f { background: var(--pick-bg); }
+.score { font-size: 12.5px; font-weight: 650; line-height: 1.2; white-space: nowrap; }
+.score .w { color: var(--win); }
+.score .l { color: var(--loss); }
 .submit {
   border: 0; border-radius: 10px; cursor: pointer; white-space: nowrap;
   background: var(--pick-bg); color: var(--pick-fg); font-weight: 750; font-size: 15px; padding: 12px 18px;
@@ -216,7 +219,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
 </div>
 <div class="bar">
   <div class="wrap bar-in">
-    <div class="count"><span><b id="count">0</b> of 15 picked</span><div class="meter" id="meter" aria-hidden="true"></div></div>
+    <div class="count"><span><b id="count">0</b> of 15 picked</span><div class="meter" id="meter" aria-hidden="true"></div><span class="score" id="score" hidden></span></div>
     <button class="submit" id="submit" type="button" disabled>Submit picks</button>
   </div>
 </div>
@@ -539,8 +542,26 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     $('games').innerHTML = h;
   }
 
+  // Right / wrong so far on finished games, from this player's picks on file.
+  function scoreSoFar() {
+    var t = { W: 0, L: 0, P: 0 };
+    S.games.forEach(function (g) {
+      var mine = (S.onFile || {})[g.n] || {};
+      ['side', 'total'].forEach(function (k) {
+        var r = mine[k] && resultFor(g, k, mine[k].val);
+        if (r) t[r]++;
+      });
+    });
+    return t;
+  }
   function renderBar() {
     var c = count(), m = '';
+    var sc = S.name ? scoreSoFar() : null, el = $('score');
+    if (sc && sc.W + sc.L + sc.P) {
+      el.innerHTML = '<span class="w">' + sc.W + ' right</span> \u00b7 <span class="l">' + sc.L + ' wrong</span>' +
+        (sc.P ? ' \u00b7 ' + sc.P + ' push' : '');
+      el.hidden = false;
+    } else el.hidden = true;
     for (var i = 0; i < NEED; i++) m += '<i class="' + (i < c ? 'f' : '') + '"></i>';
     $('count').textContent = c;
     $('meter').innerHTML = m;
