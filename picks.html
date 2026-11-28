@@ -28,6 +28,10 @@
   --logo-bg: #FFFFFF;
   --logo-rule: rgba(19, 27, 46, .12);
   --win: #11804A;
+  --loss: #C93A2F;
+  --push: #868E9B;
+  --win-bg: #DCEFE3;
+  --loss-bg: #F6E0DC;
   --display: "Big Shoulders Display", "Big Shoulders", "Arial Narrow", "Roboto Condensed", sans-serif;
   --body: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color-scheme: light;
@@ -38,6 +42,7 @@
     --paper: #0E131B; --sheet: #151C27; --ink: #E7ECF3; --ink-soft: #98A3B5; --rule: #283246;
     --cell: rgba(231, 236, 243, .07); --pen: #8DA8FF; --pick-bg: #3A5BE0; --pick-fg: #FFFFFF;
     --logo-bg: #F4F6F8; --logo-rule: rgba(0, 0, 0, .25); --win: #3FB874;
+    --loss: #F06A5D; --push: #7E8798; --win-bg: #173A29; --loss-bg: #43211E;
     color-scheme: dark;
   }
 }
@@ -45,6 +50,7 @@
   --paper: #0E131B; --sheet: #151C27; --ink: #E7ECF3; --ink-soft: #98A3B5; --rule: #283246;
   --cell: rgba(231, 236, 243, .07); --pen: #8DA8FF; --pick-bg: #3A5BE0; --pick-fg: #FFFFFF;
   --logo-bg: #F4F6F8; --logo-rule: rgba(0, 0, 0, .25); --win: #3FB874;
+    --loss: #F06A5D; --push: #7E8798; --win-bg: #173A29; --loss-bg: #43211E;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -128,6 +134,20 @@ h2 {
 .tick svg { width: 10px; height: 10px; fill: none; stroke: var(--pick-fg); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .opt:disabled { cursor: not-allowed; }
 .gc.locked .opt { opacity: .45; }
+/* finished games: the player's own picks, graded */
+.opt.res-W { background: var(--win-bg); border-color: var(--win); color: var(--ink); }
+.opt.res-L { background: var(--loss-bg); border-color: var(--loss); color: var(--ink); }
+.opt.res-P { background: var(--cell); border-color: var(--push); color: var(--ink); }
+.gc.locked .opt.res-W, .gc.locked .opt.res-L, .gc.locked .opt.res-P { opacity: 1; }
+.opt.res-W .rec, .opt.res-L .rec, .opt.res-P .rec { color: var(--ink-soft); opacity: 1; }
+.opt.res-W .tick, .opt.res-L .tick, .opt.res-P .tick { display: none; }
+.wl {
+  position: absolute; top: -8px; right: -8px; width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--sheet);
+  display: grid; place-items: center; font-family: var(--display); font-size: 13px; font-weight: 800; line-height: 1; color: #fff;
+}
+.wl.W { background: var(--win); }
+.wl.L { background: var(--loss); }
+.wl.P { background: var(--push); }
 .gc.locked .opt.on { opacity: .75; }
 .gc.noline .opt { opacity: .45; }
 
@@ -284,6 +304,49 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
     return x.w + '-' + x.l + (x.t ? '-' + x.t : '');
   }
 
+  /* ---------- results on finished games: this player's picks on file, graded ---------- */
+  function finalOf(g) {
+    var gs = (S.data && S.data.games) || [], a = CODE[g.away.abbr] || g.away.abbr, h = CODE[g.home.abbr] || g.home.abbr;
+    for (var i = 0; i < gs.length; i++) {
+      var x = gs[i];
+      if (x.week === S.week && x.away === a && x.home === h) return x.awayScore != null && x.homeScore != null ? x : null;
+    }
+    return null;
+  }
+  // The latest row for this name in the week's tab (picks on games that kicked off are public there).
+  function picksOnFile() {
+    var rows = (S.data && S.data.tabs && S.data.tabs['Picks Wk ' + S.week]) || [], cell = null, out = {};
+    rows.forEach(function (r, i) { if (i && r && String(r[1] || '').trim() === S.name) cell = String(r[2] || ''); });
+    if (!cell) return out;
+    cell.split(/,\s*(?=G\s*\d+\s*\|)/i).forEach(function (chunk) {
+      var m = chunk.match(/^\s*G\s*(\d+)\s*\|\s*([^|]*)/i);
+      if (!m) return;
+      var n = +m[1], body = m[2].trim(), o = out[n] = out[n] || {};
+      var tm = body.match(/^(over|under)\s*([0-9]+(?:\.[0-9]+)?)/i);
+      var sm = body.match(/\((home|away)\)\s*([+\-\u2212]?\s*[0-9]+(?:\.[0-9]+)?|pk|pick|even)?/i);
+      if (tm) o.total = { val: tm[1].toLowerCase(), line: parseFloat(tm[2]) };
+      else if (sm) {
+        var l = sm[2] ? sm[2].replace(/\s/g, '').replace('\u2212', '-') : '';
+        o.side = { val: sm[1].toLowerCase(), line: /^(pk|pick|even)$/i.test(l) ? 0 : parseFloat(l) };
+      }
+    });
+    return out;
+  }
+  function resultFor(g, kind, val) {
+    if (!S.name || !isLocked(g)) return null;
+    var f = finalOf(g);
+    if (!f) return null;
+    var mine = (S.onFile || {})[g.n], p = mine && mine[kind];
+    if (!p || p.val !== val || isNaN(p.line)) return null;
+    var v;
+    if (kind === 'side') v = (val === 'home' ? f.homeScore - f.awayScore : f.awayScore - f.homeScore) + p.line;
+    else v = (f.awayScore + f.homeScore - p.line) * (val === 'over' ? 1 : -1);
+    return v > 0 ? 'W' : v < 0 ? 'L' : 'P';
+  }
+  function wlBadge(r) {
+    return r ? '<span class="wl ' + r + '" aria-hidden="true">' + r + '</span>' : '';
+  }
+
   /* ---------- ESPN preview slate ---------- */
   function teamOf(c) {
     var t = (c && c.team) || {};
@@ -337,6 +400,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
       S.api = cfg.picksApi || null;
       S.season = (d && d.season) || 2026;
       S.records = records((d && d.games) || []);
+      S.data = d || null;
       S.players = Object.keys(cfg.players || {}).map(function (k) { return cfg.players[k].name; });
       if (!S.api) return startPreview(null, 'setup');
       return getJSON(S.api + '?action=slate').then(function (s) {
@@ -432,9 +496,10 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   }
   function teamBtn(g, role, enabled) {
     var t = g[role], line = role === 'home' ? g.homeLine : g.awayLine, a = optAttrs(g, 'side', role, enabled && hasSide(g));
-    var rec = recordOf(t.abbr);
-    var label = t.name + (rec ? ' (' + rec + ')' : '') + ' ' + fmtLine(line) + (role === 'home' ? ' at home' : ' on the road');
-    return '<button class="opt team' + (a.on ? ' on' : '') + '" type="button"' + a.attrs + ' aria-label="' + esc(label) + '">' +
+    var rec = recordOf(t.abbr), res = resultFor(g, 'side', role);
+    var label = t.name + (rec ? ' (' + rec + ')' : '') + ' ' + fmtLine(line) + (role === 'home' ? ' at home' : ' on the road') +
+      (res ? ', your pick, ' + (res === 'W' ? 'won' : res === 'L' ? 'lost' : 'push') : '');
+    return '<button class="opt team' + (a.on && !res ? ' on' : '') + (res ? ' res-' + res : '') + '" type="button"' + a.attrs + ' aria-label="' + esc(label) + '">' + wlBadge(res) +
       '<span class="lg"><span class="logo" data-abbr="' + esc(t.abbr) + '">' +
       (t.logo ? '<img src="' + esc(t.logo) + '" alt="" loading="lazy" width="32" height="32" onerror="this.parentNode.textContent=this.parentNode.getAttribute(\'data-abbr\')">' : esc(t.abbr)) +
       '</span>' + (rec ? '<span class="rec">' + esc(rec) + '</span>' : '') + '</span><span class="tm"><span class="tm-name">' + esc(t.name) + '</span><span class="tm-line">' + esc(fmtLine(line)) + '</span></span>' +
@@ -442,13 +507,14 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
   }
   function totBtn(g, val, enabled) {
     var a = optAttrs(g, 'total', val, enabled && hasTotal(g));
-    var word = val === 'over' ? 'Over' : 'Under';
-    return '<button class="opt tot' + (a.on ? ' on' : '') + '" type="button"' + a.attrs + '>' + word +
+    var word = val === 'over' ? 'Over' : 'Under', res = resultFor(g, 'total', val);
+    return '<button class="opt tot' + (a.on && !res ? ' on' : '') + (res ? ' res-' + res : '') + '" type="button"' + a.attrs + '>' + wlBadge(res) + word +
       '<b>' + (hasTotal(g) ? esc(g.total) : '–') + '</b><span class="tick">' + TICK + '</span></button>';
   }
   function card(g) {
     var locked = isLocked(g), noline = !hasSide(g) && !hasTotal(g), enabled = !locked && S.mode !== 'error';
-    var status = locked ? 'Kicked off' : noline ? 'Line coming' : 'G' + g.n;
+    var fin = locked && finalOf(g);
+    var status = fin ? 'Final ' + fin.awayScore + '\u2013' + fin.homeScore : locked ? 'Kicked off' : noline ? 'Line coming' : 'G' + g.n;
     return '<article class="gc' + (locked ? ' locked' : '') + (noline ? ' noline' : '') + '" aria-label="' + esc(g.away.name + ' at ' + g.home.name) + '">' +
       '<div class="gc-meta"><span>' + esc(when(g.kickoff)) + '</span><span>' + esc(status) + '</span></div>' +
       '<div class="gc-sides">' + teamBtn(g, 'away', enabled) + '<span class="at" aria-hidden="true">at</span>' + teamBtn(g, 'home', enabled) + '</div>' +
@@ -456,6 +522,7 @@ footer p { margin: 0 0 6px; max-width: 64ch; }
       (newsFor(g) ? '<p class="gc-news"><b>' + esc(newsFor(g).tag || 'News') + '</b>' + esc(newsFor(g).text) + '</p>' : '') + '</article>';
   }
   function renderGames() {
+    S.onFile = S.name ? picksOnFile() : {};
     if (S.mode === 'error') { $('games').innerHTML = '<div class="empty">No games to show right now.</div>'; return; }
     if (!S.games.length) { $('games').innerHTML = '<div class="empty">' + (S.mode === 'loading' ? 'Loading&hellip;' : 'No games posted for this week yet.') + '</div>'; return; }
     var h = '', day = null, open = false;
